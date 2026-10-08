@@ -8,6 +8,7 @@ import { writingPrompts } from '../data/writing'
 import { allSpeakingTopics } from '../data/speaking'
 import { grammarTopics } from '../data/grammar'
 import { verbs, adjectives } from '../data/vocab'
+import { tipSections } from '../data/tips'
 
 const MODULES = [
   {
@@ -45,6 +46,13 @@ const MODULES = [
     desc: 'Bøj 500 verber og 250 adjektiver med spaced repetition.',
     stat: (n: number) => `${n} ord`,
   },
+  {
+    to: '/tips',
+    icon: '💡',
+    title: 'Tips & Tricks',
+    desc: 'Eksamensstrategi, tidsfakta og de hyppigste fejl — per del af eksamen.',
+    stat: (n: number) => `${n} emner`,
+  },
 ]
 
 export function Dashboard() {
@@ -59,6 +67,7 @@ export function Dashboard() {
     '/speaking': allSpeakingTopics.length,
     '/grammar': grammarTopics.length,
     '/vocab': verbs.length + adjectives.length,
+    '/tips': tipSections.length,
   }
 
   return (

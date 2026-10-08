@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { to: '/speaking', label: 'Speaking', icon: '🗣️' },
   { to: '/grammar', label: 'Grammar', icon: '🧩' },
   { to: '/vocab', label: 'Vocab', icon: '🗂️' },
+  { to: '/tips', label: 'Tips & Tricks', icon: '💡' },
   { to: '/progress', label: 'Progress', icon: '📊' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ]

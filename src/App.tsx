@@ -11,6 +11,7 @@ import { SpeakingPractice } from './pages/speaking/SpeakingPractice'
 import { GrammarHome } from './pages/grammar/GrammarHome'
 import { GrammarQuiz } from './pages/grammar/GrammarQuiz'
 import { VocabTrainer } from './pages/vocab/VocabTrainer'
+import { Tips } from './pages/Tips'
 import { Progress } from './pages/Progress'
 import { Settings } from './pages/Settings'
 
@@ -35,6 +36,8 @@ function App() {
           <Route path="grammar/:topicId" element={<GrammarQuiz />} />
 
           <Route path="vocab" element={<VocabTrainer />} />
+
+          <Route path="tips" element={<Tips />} />
 
           <Route path="progress" element={<Progress />} />
           <Route path="settings" element={<Settings />} />
