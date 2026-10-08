@@ -91,6 +91,31 @@ machine, with no server-side changes needed.
   the app and use "Nulstil fremgang", or just clear your browser's site
   data for `localhost:5173`.
 
+## Hosting (free, on GitHub Pages)
+
+This repo is pre-configured to deploy automatically to **GitHub Pages**
+every time you push to `main`:
+
+- `vite.config.ts` sets `base: '/pd2coach/'` so built asset URLs resolve
+  correctly under `https://<your-username>.github.io/pd2coach/`.
+- The app uses React Router's `HashRouter` (URLs like `#/reading`) instead
+  of `BrowserRouter`, since plain GitHub Pages can't rewrite deep links
+  (e.g. a direct visit or refresh on `/reading`) to `index.html` — hash
+  routing sidesteps that entirely with zero server config.
+- `.github/workflows/deploy.yml` builds the app and publishes `dist/` via
+  GitHub's official Pages Actions on every push to `main`.
+
+**One-time setup** (only needed once per repo):
+1. Push to `main` (the workflow runs automatically).
+2. On GitHub: **Settings → Pages → Build and deployment → Source** → select
+   **GitHub Actions**.
+3. Wait for the "Deploy to GitHub Pages" workflow to finish (**Actions**
+   tab) — your site will then be live at
+   `https://<your-username>.github.io/pd2coach/`.
+
+If you rename the repo or deploy under a different path, update the
+`base` value in `vite.config.ts` to match.
+
 ## Content sources & coverage
 
 The Reading and Writing content is adapted from official **Prøve i Dansk 2**

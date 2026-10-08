@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { ReadingList } from './pages/reading/ReadingList'
@@ -16,7 +16,7 @@ import { Settings } from './pages/Settings'
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Dashboard />} />
@@ -40,7 +40,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
