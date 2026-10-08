@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { CoachWidget } from './CoachWidget'
+import { usePageviewTracking } from '../lib/analytics'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Oversigt', icon: '🏠', end: true },
@@ -14,6 +15,8 @@ const NAV_ITEMS = [
 ]
 
 export function Layout() {
+  usePageviewTracking()
+
   return (
     <div className="min-h-full flex flex-col md:flex-row">
       <aside className="md:w-56 shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200">

@@ -169,6 +169,23 @@ Re-running these requires the original source PDFs (kept outside version
 control under `../source-papers`), plus `pdfplumber` (`pip install
 pdfplumber`).
 
+## Visitor analytics
+
+The app includes a privacy-friendly (cookieless, no consent banner needed)
+analytics snippet from [GoatCounter](https://www.goatcounter.com/) in
+`index.html`, plus SPA route tracking in `src/lib/analytics.ts` so each
+module (Reading, Writing, Speaking, ...) shows up as its own pageview.
+
+**To activate it** (one-time, ~30 seconds, free, no credit card):
+1. Go to https://www.goatcounter.com/signup
+2. Enter the site code **`pd2coach-ankurjha21`** (must match exactly — it's
+   already baked into `index.html`) and your email.
+3. Click the magic link GoatCounter emails you.
+4. View stats anytime at `https://pd2coach-ankurjha21.goatcounter.com`.
+
+Until step 1-3 are done, the script just silently no-ops (the count pixel
+404s harmlessly) — it never breaks the app either way.
+
 ## AI Coach & your data
 
 - All progress, flashcard scheduling, and settings are stored in your
