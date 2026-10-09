@@ -74,6 +74,38 @@ def build_exam(year, season, skip_existing=()):
         'questions': opg1_questions,
     })
 
+    try:
+        questions2, source2, letters2 = m.extract_opgave2(q1)
+    except Exception as e:
+        questions2, source2, letters2 = [], '', []
+        print(f"NOTE {year} {season}: opgave2 extraction error {e}", file=sys.stderr)
+    if len(letters2) == 9 and len(questions2) == 7:
+        opg2_questions = []
+        for q in questions2:
+            num = q['number']
+            ans, pts = answer_key.get(num, ('', 0 if num == 0 else 1))
+            opg2_questions.append({
+                'id': f'q{num}',
+                'number': num,
+                'prompt': q['prompt'],
+                'type': 'matching',
+                'options': [] if num == 0 else [l for l in 'ABCDEFGHI'],
+                'answer': ans,
+                'points': pts,
+            })
+        tasks.append({
+            'id': f'{key}-opg2',
+            'opgaveNumber': 2,
+            'part': 'Delprøve 1',
+            'title': 'Annoncer (match ord til annonce)',
+            'type': 'matching',
+            'instructions': 'Der mangler et eller flere ord i hver annonce. Find den annonce (A-I), der passer til ordene på listen. Der er to annoncer, du ikke skal bruge.',
+            'sourceText': source2,
+            'questions': opg2_questions,
+        })
+    else:
+        print(f"NOTE {year} {season}: opgave2 incomplete (letters={len(letters2)} clues={len(questions2)}), skipped", file=sys.stderr)
+
     if not override.get('skip_l2'):
         l2 = m.find_l2(year, season)
         if l2:

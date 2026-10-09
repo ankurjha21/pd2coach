@@ -119,23 +119,21 @@ If you rename the repo or deploy under a different path, update the
 ## Content sources & coverage
 
 The Reading and Writing content is adapted from official **Prøve i Dansk 2**
-past exams spanning **2013–2022**, sourced from the exam booklets and their
+past exams spanning **2013–2023**, sourced from the exam booklets and their
 accompanying censor/eksaminator answer-key booklets in `../source-papers`
 (not committed to version control — see below). Used here strictly for
 personal exam preparation.
 
-- **Reading**: 19 full or partial practice exams.
-  - Opgave 1 (scanning for facts) and Opgave 3–5 (cloze / sentence-gap /
-    paragraph-match) are included for nearly every year/season from
-    2013–2022.
-  - Opgave 2 (ad-matching) is only included for the two most recent,
-    hand-verified exams (2022 and 2023 Sommer) — older years use PDF
-    layouts too inconsistent to extract reliably by script, so it was
-    intentionally left out rather than risk shipping wrong answers.
-  - 2019 Sommer only has Opgave 1 (the source archive is missing the
+- **Reading**: 21 full practice exams (2013–2023, every sitting except
+  2023 Vinter, which doesn't exist in the source archive).
+  - All 5 task types are included for every exam: Opgave 1 (scanning),
+    Opgave 2 (ad matching), Opgave 3 (cloze), Opgave 4 (sentence-gap), and
+    Opgave 5 (paragraph-match) — each auto-scored against the real
+    official censor/eksaminator answer keys.
+  - 2019 Sommer only has Opgave 1-2 (the source archive is missing the
     Opgave 3-5 booklet for that sitting).
-  - 2016 Sommer and 2023 Vinter are not included (source files missing or
-    unreadable).
+  - 2023 Vinter is not included (no exam was found in the source archive
+    for that sitting).
 - **Writing**: 8 letter genres (opslag, invitation, jobansøgning, klage,
   takkebrev, anbefaling, læserbrev, efterlysning) plus the email genre,
   with real prompts spanning 2012–2023 and several real, graded student

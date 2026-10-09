@@ -15,7 +15,7 @@ const MODULES = [
     to: '/reading',
     icon: '📖',
     title: 'Reading',
-    desc: 'Læseforståelse — rigtige eksamensopgaver 2013-2022 med facit.',
+    desc: 'Læseforståelse — rigtige eksamensopgaver 2013-2023 med facit.',
     stat: (n: number) => `${n} eksamenssæt`,
   },
   {

@@ -266,14 +266,19 @@ def extract_opgave1(questions_path, text_path):
 
     questions = []
     current_category = None
+    seen_numbers = set()
+    expected = set(range(0, 7))  # opgave 1 is always example (0) + Q1-6
     for line in block.split('\n'):
         cat_match = re.match(r'^Søg informationer under (.+?)\.?$', line)
         if cat_match:
             current_category = cat_match.group(1).strip()
             continue
-        qm = re.match(r'^(\d+)\.\s+(.+)$', line)
+        qm = re.match(r'^(\d+)\.?\s+(.+)$', line)
         if qm:
             num = int(qm.group(1))
+            if num not in expected or num in seen_numbers:
+                continue  # discard false positives like "80 m2" measurements
+            seen_numbers.add(num)
             prompt = qm.group(2).strip()
             if current_category:
                 prompt = f'({current_category}) {prompt}'
@@ -294,6 +299,54 @@ def extract_opgave1(questions_path, text_path):
         source_text = f"[Fejl ved tekstudtræk: {e}]"
     return questions, source_text
 
+def extract_opgave2_clues(page):
+    """Extracts the numbered clue list (0, 7-12) from the opgave 2
+    instruction page. This page reprints the ads in a left column with the
+    clue list in a (visually) right-ish position, but clue numbers and ad
+    reprints can land on the same 'top' row by coincidence. Fix: for each
+    numbered marker, only keep words at or right of the marker's own x0
+    (same column start), within a vertical band up to the next marker —
+    this discards any left-bleeding ad-reprint text on the same row.
+
+    Candidate markers are also disambiguated against false positives (e.g.
+    "7." inside a date like "kl. 17-18.30") by requiring the expected
+    sequence 0, 7, 8, 9, 10, 11, 12 to appear in strictly increasing
+    vertical (top) order, same as how the real clue list is always laid
+    out top-to-bottom."""
+    words = page.extract_words(use_text_flow=False, keep_blank_chars=False)
+    expected_order = [0, 7, 8, 9, 10, 11, 12]
+    candidates = {n: [] for n in expected_order}
+    for w in words:
+        m = re.match(r'^(\d+)\.$', w['text'])
+        if m:
+            n = int(m.group(1))
+            if n in candidates:
+                candidates[n].append((w['top'], w['x0']))
+
+    markers = []
+    last_top = -1.0
+    for n in expected_order:
+        opts = sorted(t for t, _ in candidates[n] if t > last_top)
+        if not opts:
+            continue
+        top = opts[0]
+        x0 = next(x0 for t, x0 in candidates[n] if t == top)
+        markers.append((n, top, x0))
+        last_top = top
+
+    clues = {}
+    for idx, (num, top, x0) in enumerate(markers):
+        band_end = markers[idx + 1][1] - 2 if idx + 1 < len(markers) else top + 40
+        band_words = [
+            w for w in words
+            if top - 1 <= w['top'] < band_end and w['x0'] >= x0 and w['text'] != f'{num}.'
+        ]
+        band_words.sort(key=lambda w: (round(w['top'], 1), w['x0']))
+        text = " ".join(w['text'] for w in band_words).strip()
+        if text:
+            clues[num] = text
+    return clues
+
 # ---------- Opgave 2 (ad matching) ----------
 
 def extract_opgave2(questions_path):
@@ -303,7 +356,15 @@ def extract_opgave2(questions_path):
         clue_page_idx = None
         for i, p in enumerate(pages):
             t = p.extract_text() or ""
-            if 'Annoncer' in t and ad_page_idx is None:
+            is_ad_page = (
+                ad_page_idx is None
+                and 'Delprøve 1' in t
+                and 'Opgave 2' in t
+                and ('Eksempel' in t)
+                and ('■' in t or 'Annoncer' in t)
+                and 'Instruktion' not in t
+            )
+            if is_ad_page:
                 ad_page_idx = i
             if ad_page_idx is not None and i > ad_page_idx and 'Instruktion' in t and 'annoncerne' in t.lower():
                 clue_page_idx = i
@@ -323,7 +384,11 @@ def extract_opgave2(questions_path):
             for b in boxes:
                 if 'Opgave 2' in b['text'] and 'Annoncer' in b['text']:
                     continue  # title bar
-                letter_match = re.search(r'\b([A-I])\s*■(?:\s*■)*\s*', b['text'])
+                # Letter markers are typically "A ■ ■ ■..." but some years
+                # render them as "■A □■ □■..." or "-F □■..." (mixed filled/
+                # hollow square glyphs, optional leading stray character,
+                # and occasionally a bullet between the letter and squares).
+                letter_match = re.search(r'[■\-]?\s*\b([A-I])\b\s*[•\-]?\s*[■□](?:\s*[■□])*\s*', b['text'])
                 if not letter_match:
                     continue
                 letter = letter_match.group(1)
@@ -334,26 +399,15 @@ def extract_opgave2(questions_path):
                     ad_texts.append((letter, cleaned))
         ad_texts.sort(key=lambda x: x[0])
 
-        # Clue list: scan pages for whichever yields a clean 0,7-12 numbered
-        # list, trying both plain and column-aware extraction per page (the
-        # layout varies year to year: ad-reprints beside clues, or clues
-        # alone).
+        # Clue list: scan all pages for whichever one yields a clean set of
+        # markers 0 and 7-12 via position-based extraction (handles the
+        # left-bleed-from-ad-reprints issue).
         questions = []
-        with pdfplumber.open(questions_path) as pdf2:
-            for page in pdf2.pages:
-                for candidate_text in (clean_noise(page.extract_text() or ""), clean_noise(extract_page_columns(page))):
-                    found = {}
-                    for line in candidate_text.split('\n'):
-                        qm = re.match(r'^(\d+)\.\s+(.+)$', line)
-                        if qm:
-                            num = int(qm.group(1))
-                            if num in (0, 7, 8, 9, 10, 11, 12) and num not in found:
-                                found[num] = qm.group(2).strip()
-                    if len(found) >= 6 and all(n in found for n in (7, 8, 9, 10, 11, 12)):
-                        questions = [{'number': n, 'prompt': p} for n, p in sorted(found.items())]
-                        break
-                if questions:
-                    break
+        for page in pages:
+            clues = extract_opgave2_clues(page)
+            if all(n in clues for n in (7, 8, 9, 10, 11, 12)):
+                questions = [{'number': n, 'prompt': clues[n]} for n in sorted(clues) if n in (0, 7, 8, 9, 10, 11, 12)]
+                break
 
     source_text = "\n\n".join(f"{letter}: {txt}" for letter, txt in ad_texts)
     letters = sorted({letter for letter, _ in ad_texts})
@@ -460,14 +514,20 @@ def extract_opgave45(segment, l2_path=None):
 
 def extract_opgave5_questions(segment):
     questions = []
+    expected = {0, 26, 27, 28, 29, 30}
+    seen = set()
     for line in segment.split('\n'):
-        qm = re.match(r'^(\d+)\.\s+(.+)$', line)
+        qm = re.match(r'^(\d+)\.?\s+(.+)$', line)
         if qm:
+            num = int(qm.group(1))
+            if num not in expected or num in seen:
+                continue
+            seen.add(num)
             prompt = qm.group(2).strip()
             # the example question (0) is sometimes followed by its single-letter
             # answer on the same line (e.g. "Hvorfor...? A") — strip it
             prompt = re.sub(r'\s+[A-H]$', '', prompt)
-            questions.append({'number': int(qm.group(1)), 'prompt': prompt})
+            questions.append({'number': num, 'prompt': prompt})
     return questions
 
 def extract_opgave5_body(l2_path, title):
