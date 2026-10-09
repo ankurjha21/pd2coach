@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { CoachWidget } from './CoachWidget'
 import { usePageviewTracking } from '../lib/analytics'
+import { getExamLevel, setExamLevel as persistExamLevel } from '../lib/storage'
+import type { ExamLevel } from '../types'
 
 interface NavItem {
   to: string
@@ -10,14 +12,14 @@ interface NavItem {
   end?: boolean
 }
 
-const PRIMARY_ITEMS: NavItem[] = [
+const PD2_PRIMARY_ITEMS: NavItem[] = [
   { to: '/', label: 'Hjem', icon: '🏠', end: true },
   { to: '/reading', label: 'Reading', icon: '📖' },
   { to: '/writing', label: 'Writing', icon: '✍️' },
   { to: '/speaking', label: 'Speaking', icon: '🗣️' },
 ]
 
-const MORE_ITEMS: NavItem[] = [
+const PD2_MORE_ITEMS: NavItem[] = [
   { to: '/grammar', label: 'Grammar', icon: '🧩' },
   { to: '/vocab', label: 'Vocab', icon: '🗂️' },
   { to: '/tips', label: 'Tips & Tricks', icon: '💡' },
@@ -25,20 +27,72 @@ const MORE_ITEMS: NavItem[] = [
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ]
 
-const ALL_ITEMS: NavItem[] = [
-  { to: '/', label: 'Oversigt', icon: '🏠', end: true },
-  ...PRIMARY_ITEMS.slice(1),
-  ...MORE_ITEMS,
+const PD3_PRIMARY_ITEMS: NavItem[] = [
+  { to: '/', label: 'Hjem', icon: '🏠', end: true },
+  { to: '/pd3/reading', label: 'Reading', icon: '📖' },
+  { to: '/pd3/writing', label: 'Writing', icon: '✍️' },
+  { to: '/pd3/speaking', label: 'Speaking', icon: '🗣️' },
 ]
 
-function isMoreActive(pathname: string) {
-  return MORE_ITEMS.some((item) => pathname.startsWith(item.to))
-}
+const PD3_MORE_ITEMS: NavItem[] = [
+  { to: '/pd3/grammar', label: 'Grammar', icon: '🧩' },
+  { to: '/pd3/vocab', label: 'Vocab', icon: '🗂️' },
+  { to: '/tips', label: 'Tips & Tricks', icon: '💡' },
+  { to: '/progress', label: 'Progress', icon: '📊' },
+  { to: '/settings', label: 'Settings', icon: '⚙️' },
+]
 
 export function Layout() {
   usePageviewTracking()
   const [moreOpen, setMoreOpen] = useState(false)
+  const [examLevel, setExamLevelState] = useState<ExamLevel>(getExamLevel())
   const location = useLocation()
+  const navigate = useNavigate()
+
+  // keep the toggle in sync if exam level was changed elsewhere (e.g. Dashboard)
+  useEffect(() => {
+    setExamLevelState(getExamLevel())
+  }, [location.pathname])
+
+  const primaryItems = examLevel === 'pd3' ? PD3_PRIMARY_ITEMS : PD2_PRIMARY_ITEMS
+  const moreItems = examLevel === 'pd3' ? PD3_MORE_ITEMS : PD2_MORE_ITEMS
+  const allItems: NavItem[] = [
+    { to: '/', label: 'Oversigt', icon: '🏠', end: true },
+    ...primaryItems.slice(1),
+    ...moreItems,
+  ]
+
+  function isMoreActive(pathname: string) {
+    return moreItems.some((item) => pathname.startsWith(item.to))
+  }
+
+  function switchExamLevel(level: ExamLevel) {
+    setExamLevelState(level)
+    persistExamLevel(level)
+    setMoreOpen(false)
+    navigate('/')
+  }
+
+  const examSwitcher = (
+    <div className="flex bg-gray-100 rounded-full p-1 text-xs font-bold">
+      <button
+        onClick={() => switchExamLevel('pd2')}
+        className={`px-3 py-1.5 rounded-full transition-colors ${
+          examLevel === 'pd2' ? 'bg-white text-dk-red shadow-sm' : 'text-gray-500'
+        }`}
+      >
+        PD2
+      </button>
+      <button
+        onClick={() => switchExamLevel('pd3')}
+        className={`px-3 py-1.5 rounded-full transition-colors ${
+          examLevel === 'pd3' ? 'bg-white text-dk-red shadow-sm' : 'text-gray-500'
+        }`}
+      >
+        PD3
+      </button>
+    </div>
+  )
 
   return (
     <div className="min-h-full flex flex-col md:flex-row">
@@ -47,12 +101,15 @@ export function Layout() {
         <div className="p-5 flex items-center gap-2.5 border-b border-gray-100">
           <span className="text-2xl">🇩🇰</span>
           <div>
-            <div className="font-extrabold text-lg leading-tight tracking-tight">PD2 Coach</div>
-            <div className="text-xs text-gray-500">Prøve i Dansk 2</div>
+            <div className="font-extrabold text-lg leading-tight tracking-tight">
+              {examLevel === 'pd3' ? 'PD3 Coach' : 'PD2 Coach'}
+            </div>
+            <div className="text-xs text-gray-500">{examLevel === 'pd3' ? 'Prøve i Dansk 3' : 'Prøve i Dansk 2'}</div>
           </div>
         </div>
+        <div className="px-5 pt-4">{examSwitcher}</div>
         <nav className="flex flex-col gap-1 px-3 py-4 flex-1">
-          {ALL_ITEMS.map((item, i) => (
+          {allItems.map((item, i) => (
             <div key={item.to}>
               {i === 4 && <div className="h-px bg-gray-100 my-2 mx-1" />}
               <NavLink
@@ -79,9 +136,12 @@ export function Layout() {
 
       {/* Mobile top bar */}
       <header className="md:hidden sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200">
-        <div className="flex items-center gap-2 px-4 py-3">
-          <span className="text-xl">🇩🇰</span>
-          <div className="font-extrabold text-base tracking-tight">PD2 Coach</div>
+        <div className="flex items-center justify-between gap-2 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🇩🇰</span>
+            <div className="font-extrabold text-base tracking-tight">{examLevel === 'pd3' ? 'PD3 Coach' : 'PD2 Coach'}</div>
+          </div>
+          {examSwitcher}
         </div>
       </header>
 
@@ -94,7 +154,7 @@ export function Layout() {
       {/* Mobile bottom tab bar */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-5">
-          {PRIMARY_ITEMS.map((item) => (
+          {primaryItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -131,7 +191,7 @@ export function Layout() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="grid grid-cols-1 gap-1 max-h-[60vh] overflow-y-auto">
-              {MORE_ITEMS.map((item) => (
+              {moreItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}

@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Intermediate extraction artifacts (regenerate via scripts/generate_pd3_archive.py)
+scripts/pd3_json/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

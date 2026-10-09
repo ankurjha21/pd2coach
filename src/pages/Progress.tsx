@@ -3,11 +3,16 @@ import { getAttempts, clearAttempts } from '../lib/storage'
 import type { ModuleKey } from '../types'
 
 const MODULE_LABELS: Record<ModuleKey, string> = {
-  reading: '📖 Reading',
-  writing: '✍️ Writing',
-  speaking: '🗣️ Speaking',
-  grammar: '🧩 Grammar',
-  vocab: '🗂️ Vocab',
+  reading: '📖 PD2 Reading',
+  writing: '✍️ PD2 Writing',
+  speaking: '🗣️ PD2 Speaking',
+  grammar: '🧩 PD2 Grammar',
+  vocab: '🗂️ PD2 Vocab',
+  'pd3-reading': '📖 PD3 Reading',
+  'pd3-writing': '✍️ PD3 Writing',
+  'pd3-speaking': '🗣️ PD3 Speaking',
+  'pd3-grammar': '🧩 PD3 Grammar',
+  'pd3-vocab': '🗂️ PD3 Vocab',
 }
 
 export function Progress() {

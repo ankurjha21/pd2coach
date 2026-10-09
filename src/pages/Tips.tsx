@@ -1,6 +1,12 @@
 import { examFacts, tipSections } from '../data/tips'
+import { pd3ExamFacts, pd3TipSections } from '../data/pd3Tips'
+import { getExamLevel } from '../lib/storage'
 
 export function Tips() {
+  const isPd3 = getExamLevel() === 'pd3'
+  const facts = isPd3 ? pd3ExamFacts : examFacts
+  const sections = isPd3 ? pd3TipSections : tipSections
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -8,7 +14,7 @@ export function Tips() {
           💡
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Tips & Tricks</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900">Tips & Tricks {isPd3 ? '(PD3)' : '(PD2)'}</h1>
           <p className="text-gray-600 text-sm mt-0.5">
             Strategi og huskeregler — baseret på de officielle eksamensregler og bedømmelseskriterier.
           </p>
@@ -16,9 +22,9 @@ export function Tips() {
       </div>
 
       <div className="card p-5 bg-linear-to-br from-white to-indigo-50/40">
-        <h2 className="font-bold text-gray-900 mb-3">{examFacts.title}</h2>
+        <h2 className="font-bold text-gray-900 mb-3">{facts.title}</h2>
         <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3.5">
-          {examFacts.items.map((item, i) => (
+          {facts.items.map((item, i) => (
             <div key={i} className="text-sm">
               <dt className="text-gray-500">{item.label}</dt>
               <dd className="font-bold text-gray-900 mt-0.5">{item.value}</dd>
@@ -28,7 +34,7 @@ export function Tips() {
       </div>
 
       <div className="grid gap-4">
-        {tipSections.map((section) => (
+        {sections.map((section) => (
           <div key={section.id} className="card p-5">
             <h2 className="font-bold text-gray-900 flex items-center gap-2.5 mb-3">
               <span className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shrink-0">

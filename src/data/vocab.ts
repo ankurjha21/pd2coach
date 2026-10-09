@@ -262,7 +262,7 @@ export const verbs: VerbEntry[] = [
   { infinitive: 'lægge', present: '(tr.)', past: 'lægger', presentPerfect: 'lagde har', pastPerfect: 'lagt havde', imperative: 'lagt', verbClass: 'uv' },
   { infinitive: 'lære', present: 'lærer', past: 'lærte', presentPerfect: 'har lært', pastPerfect: 'havde lært', imperative: 'lær', verbClass: 'b2' },
   { infinitive: 'læse', present: 'læser', past: 'læste', presentPerfect: 'har læst', pastPerfect: 'havde læst', imperative: 'læs', verbClass: 'b2' },
-  { infinitive: 'løbe', present: 'løber', past: 'løb', presentPerfect: 'har /', pastPerfect: 'er løbet', imperative: 'havde', verbClass: 'uv' },
+  { infinitive: 'løbe', present: 'løber', past: 'løb', presentPerfect: 'har/er løbet', pastPerfect: 'havde/var løbet', imperative: 'løb', verbClass: 'uv' },
   { infinitive: 'løfte', present: 'løfter', past: 'løftede', presentPerfect: 'har løftet', pastPerfect: 'havde løftet', imperative: 'løft', verbClass: 'b1' },
   { infinitive: 'løse', present: 'løser', past: 'løste', presentPerfect: 'har løst', pastPerfect: 'havde løst', imperative: 'løs', verbClass: 'b2' },
   { infinitive: 'låne', present: 'låner', past: 'lånte', presentPerfect: 'har lånt', pastPerfect: 'havde lånt', imperative: 'lån', verbClass: 'b2' },

@@ -7,6 +7,7 @@
 // fails (e.g. no internet).
 import type { AttemptRecord } from '../types'
 import { getSettings } from './storage'
+import { verbs, adjectives } from '../data/vocab'
 
 export interface CoachStats {
   readingAvg: number | null
@@ -115,8 +116,47 @@ export async function askCoach(question: string, stats: CoachStats, history: { r
   }
 }
 
+// Extracts a candidate Danish word from a question like 'Hvordan bøjer jeg
+// verbet "at løbe"?' or 'bøjning af spise' — strips a leading "at " and any
+// surrounding quotes/punctuation.
+function extractWordCandidate(question: string): string | null {
+  const m = question.match(/[""']?\s*(?:at\s+)?([a-zæøåA-ZÆØÅ]+)\s*[""']?\s*\??\s*$/)
+  if (m) return m[1].toLowerCase()
+  const words = question
+    .toLowerCase()
+    .replace(/[""'?.,]/g, '')
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !STOPWORDS.has(w))
+  return words.length ? words[words.length - 1] : null
+}
+
+const STOPWORDS = new Set([
+  'hvordan', 'bøjer', 'bøjning', 'jeg', 'verbet', 'ordet', 'adjektivet', 'af', 'på', 'i', 'til', 'for',
+  'dansk', 'betyder', 'hvad', 'konjugerer', 'konjugation',
+])
+
+function formatVerbAnswer(v: { infinitive: string; present: string; past: string; presentPerfect: string; imperative: string }) {
+  return `Verbet "${v.infinitive}" bøjes sådan:\n\n• Infinitiv: at ${v.infinitive}\n• Nutid (præsens): ${v.present}\n• Datid (præteritum): ${v.past}\n• Førnutid (perfektum): ${v.presentPerfect}\n• Bydeform (imperativ): ${v.imperative}\n\nØv flere verber i Vocab-modulet med spaced repetition.`
+}
+
+function formatAdjectiveAnswer(a: { nForm: string; tForm: string; eForm: string; comparative: string; superlative: string }) {
+  return `Adjektivet "${a.nForm}" bøjes sådan:\n\n• N-form (en-ord): ${a.nForm}\n• T-form (et-ord): ${a.tForm}\n• E-form (flertal/bestemt): ${a.eForm}\n• Komparativ: ${a.comparative}\n• Superlativ: ${a.superlative}\n\nØv flere adjektiver i Vocab-modulet.`
+}
+
 function offlineAnswer(question: string, stats: CoachStats): string {
   const q = question.toLowerCase()
+
+  // Verb/adjective conjugation lookups — these are asked for very
+  // specifically, so a generic tip would feel like a non-answer.
+  if (q.includes('bøj') || q.includes('konjuger') || q.includes('datid') || q.includes('nutid') || q.includes('førnutid')) {
+    const candidate = extractWordCandidate(question)
+    const verb = candidate ? verbs.find((v) => v.infinitive === candidate) : undefined
+    if (verb) return formatVerbAnswer(verb)
+    const adj = candidate ? adjectives.find((a) => a.nForm === candidate) : undefined
+    if (adj) return formatAdjectiveAnswer(adj)
+    return `Jeg kunne ikke genkende ordet${candidate ? ` "${candidate}"` : ''} i min ordliste (500 verber + 250 adjektiver). Prøv at skrive det på grundformen (fx "løbe" i stedet for "løber"), eller slå det op direkte i Vocab-modulet, hvor du kan søge og øve med spaced repetition.`
+  }
+
   if (q.includes('skriv') || q.includes('writing') || q.includes('stile')) {
     return 'Til skriftlig fremstilling: svar på ALLE punkterne i opgaven, brug en passende indledning/afslutning for genren, og tjek ordtal i e-mailen (minimum 100 ord). Se en model-besvarelse i Writing-modulet for inspiration.'
   }
@@ -126,5 +166,19 @@ function offlineAnswer(question: string, stats: CoachStats): string {
   if (q.includes('tal') || q.includes('speaking') || q.includes('mundtlig')) {
     return 'Til mundtlig kommunikation: øv dig i at begrunde din mening ("...fordi...", "...for mig betyder det..."), og træn i at lytte og svare på din makkers synspunkter i diskussionsdelen.'
   }
-  return offlineTips(stats).join('\n\n')
+  if (q.includes('grammatik') || q.includes('grammar') || q.includes('ordstilling') || q.includes('modalverb')) {
+    return 'Se Grammar-modulet for forklaringer og quizzer om ordstilling, bøjning, tider og modalverber — hvert emne har eksempler og en lille test, så du kan tjekke, om du har forstået det.'
+  }
+  if (q.includes('ordforråd') || q.includes('vocab') || q.includes('gloser') || q.includes('ord ')) {
+    return 'Brug Vocab-modulet til at øve ordforråd — det bruger spaced repetition (Leitner-system), så ord, du har svært ved, dukker op oftere, og ord du kan godt, dukker op sjældnere.'
+  }
+
+  // Unrecognized question: be explicit about scope instead of silently
+  // dumping unrelated generic tips, which otherwise looks like a bug.
+  return (
+    'Jeg er en offline AI Coach og kan bedst svare på spørgsmål om Reading, Writing, Speaking, Grammar og Vocab (fx "hvordan bøjer jeg verbet at løbe?"). ' +
+    'For åbne spørgsmål om alt muligt dansk kan du tilføje din egen OpenAI API-nøgle under Settings for rigtige AI-svar.\n\n' +
+    'Her er nogle generelle tips i mellemtiden:\n\n' +
+    offlineTips(stats).join('\n\n')
+  )
 }

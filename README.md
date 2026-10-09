@@ -1,15 +1,20 @@
-# 🇩🇰 PD2 Coach
+# 🇩🇰 PD2 & PD3 Coach
 
-A local, offline-first study app for **Prøve i Dansk 2 (PD2)** — the Danish
-B1-level exam for foreign residents. Built around real past exam content for
-Reading, Writing, and Speaking, plus a Grammar Engine, a Vocab trainer with
-spaced repetition, a Progress tracker, and an AI Coach.
+A local, offline-first study app for **Prøve i Dansk 2 (PD2)** and
+**Prøve i Dansk 3 (PD3)** — the Danish B1- and B2-level exams for foreign
+residents. Built around real past exam content for Reading, Writing, and
+Speaking, plus a Grammar Engine, a Vocab trainer with spaced repetition, a
+Progress tracker, and an AI Coach. Use the **PD2 / PD3 switcher** at the top
+of the app to move between the two exam tracks — each has its own set of
+modules, but they share the same Progress history and Settings.
 
 Everything runs **entirely in your browser** — no backend, no account, no
 data leaves your machine (unless you opt in to the AI Coach's "bring your
 own OpenAI key" feature, see below).
 
 ## Modules
+
+### PD2 (B1)
 
 | Module | What it does |
 |---|---|
@@ -18,8 +23,24 @@ own OpenAI key" feature, see below).
 | 🗣️ **Speaking** | Picture-description + opinion + experience + paired-discussion prompts, with optional mic recording and live (best-effort) transcription |
 | 🧩 **Grammar** | Explanations + quizzes on the B1 grammar points PD2 tests most (word order, article/adjective agreement, tenses, modal verbs, prepositions) |
 | 🗂️ **Vocab** | Flashcard drills for the 500 most common Danish verbs (full conjugations) and 250 adjectives, scheduled with a Leitner-style spaced-repetition algorithm |
-| 📊 **Progress** | Local history of every attempt/score, per module |
-| 🤖 **AI Coach** | A floating chat widget giving study tips based on your own progress stats — works fully offline; optionally upgrade to real conversational AI with your own API key |
+
+### PD3 (B2)
+
+| Module | What it does |
+|---|---|
+| 📖 **Reading** | Læseforståelse 1 (search-and-scan) and 2 (multiple choice, paragraph-matching, cloze), auto-scored against the official answer keys |
+| ✍️ **Writing** | An e-mail reply task plus a choice between two argumentative essay tasks per exam, with the same AI-feedback and self-check tools as PD2 |
+| 🗣️ **Speaking** | Topic cards reproducing the real examiner script's obligatory questions and follow-ups, for both picture situations per topic |
+| 🧩 **Grammar** | B2 topics building on PD2's foundation: passive voice, relative clauses, subordinate-clause word order, participles as adjectives, and reported speech |
+| 🗂️ **Vocab** | Flashcard drills for B2 "glue language" — argumentative sentence connectives (fx *ikke desto mindre*, *til gengæld*) and common idioms |
+
+### Shared
+
+| Module | What it does |
+|---|---|
+| 💡 **Tips & Tricks** | Exam facts and strategy tips — content switches automatically between PD2 and PD3 based on the active exam level |
+| 📊 **Progress** | Local history of every attempt/score, across both PD2 and PD3 modules |
+| 🤖 **AI Coach** | A floating chat widget giving study tips based on your own progress stats, plus direct verb/adjective-conjugation lookups — works fully offline; optionally upgrade to real conversational AI with your own API key |
 
 ## Running locally
 
@@ -118,6 +139,8 @@ If you rename the repo or deploy under a different path, update the
 
 ## Content sources & coverage
 
+### PD2 (2013–2023)
+
 The Reading and Writing content is adapted from official **Prøve i Dansk 2**
 past exams spanning **2013–2023**, sourced from the exam booklets and their
 accompanying censor/eksaminator answer-key booklets in `../source-papers`
@@ -147,11 +170,38 @@ personal exam preparation.
 - **Vocab**: the verb and adjective tables are parsed from public study
   lists in the source material.
 
-### Reproducing/extending the Reading archive
+### PD3 (2018–2024)
 
-The `scripts/` folder contains the Python extraction pipeline used to turn
-the raw exam PDFs into the structured data in `src/data/reading.ts` and
-`src/data/readingArchive.ts`:
+The PD3 Reading, Writing, and Speaking content is adapted the same way,
+from official **Prøve i Dansk 3** past exams spanning **2018–2024** (13
+sessions). Earlier PD3 years back to 2004 exist in the source collection,
+but 2016–2017 are scanned-image PDFs with no extractable text, so the
+automated pipeline currently covers 2018 onward.
+
+- **Reading**: 13 full practice exams, each split into two papers:
+  - *Læseforståelse 1* (Delprøve 1): a directory-style search-and-scan
+    task, auto-scored against the official short-answer key.
+  - *Læseforståelse 2*: Delprøve 2A (multiple choice), plus either
+    Delprøve 2B as a cloze test (2018–2021) or Delprøve 2B (paragraph
+    matching) + Delprøve 3 (cloze) in the newer exam format (2022
+    onward) — the exam's own structure changed partway through this
+    range, and both formats are supported.
+- **Writing**: every session's e-mail task (Delprøve 1) plus both choice-A
+  and choice-B argumentative essay tasks (Delprøve 2).
+- **Speaking**: every available session's 3 topics (A/B/C), each with the
+  real examiner script's obligatory questions and follow-ups for both
+  picture situations (2022 Sommer has no speaking booklet in the source
+  archive, so that one session is reading/writing only).
+- **Grammar** and **Vocab**: written from scratch for this app (not sourced
+  from the exam papers), covering B2-level topics that build on PD2's B1
+  foundation.
+
+### Reproducing/extending the archives
+
+The `scripts/` folder contains the Python extraction pipelines used to turn
+the raw exam PDFs into structured data.
+
+**PD2** → `src/data/reading.ts` / `src/data/readingArchive.ts`:
 
 - `pdf_column_extract.py` / `pdf_grid_extract.py` — column/grid-aware PDF
   text extraction helpers (handles the 2-column directory-style reading
@@ -163,9 +213,20 @@ the raw exam PDFs into the structured data in `src/data/reading.ts` and
   years and emits `reading_archive_ts_content.txt`, converted into
   `src/data/readingArchive.ts`.
 
-Re-running these requires the original source PDFs (kept outside version
-control under `../source-papers`), plus `pdfplumber` (`pip install
-pdfplumber`).
+**PD3** → `src/data/pd3Reading.ts` / `pd3Writing.ts` / `pd3Speaking.ts`:
+
+- `pd3_common.py` — shared helpers (session list, fuzzy filename lookup,
+  boilerplate/junk-line filtering).
+- `extract_pd3_reading.py` / `extract_pd3_writing.py` /
+  `extract_pd3_speaking.py` — per-module extraction, each writing a JSON
+  file to `scripts/pd3_json/`.
+- `generate_pd3_archive.py` — runs all three PD3 extractors, then converts
+  the JSON into the three `src/data/pd3*.ts` files. Run with:
+  `python3 scripts/generate_pd3_archive.py`.
+
+Re-running either pipeline requires the original source PDFs (kept outside
+version control under `../source-papers`), plus `pdfplumber`
+(`pip install pdfplumber`).
 
 ## Visitor analytics
 

@@ -1,10 +1,14 @@
 // Local persistence layer. Everything runs client-side in the browser via
-// localStorage — no backend/server needed to use this app.
-import type { AttemptRecord, VocabSrsState } from '../types'
+// localStorage — no backend/server needed to use this app. PD2 and PD3
+// (Prøve i Dansk 3, a separate, higher-level exam) attempts/progress share
+// this same mechanism; the exam-level toggle just controls which track the
+// nav/dashboard focuses on.
+import type { AttemptRecord, ExamLevel, VocabSrsState } from '../types'
 
 const ATTEMPTS_KEY = 'pd2coach.attempts'
 const SRS_KEY = 'pd2coach.srs'
 const SETTINGS_KEY = 'pd2coach.settings'
+const EXAM_LEVEL_KEY = 'pd2coach.examLevel'
 
 export interface Settings {
   openAiApiKey?: string
@@ -75,4 +79,23 @@ export function resetAllData() {
   localStorage.removeItem(ATTEMPTS_KEY)
   localStorage.removeItem(SRS_KEY)
   // settings (incl. API key) intentionally preserved on "reset progress"
+}
+
+// ---------------- Exam level (PD2 / PD3) ----------------
+
+export function getExamLevel(): ExamLevel {
+  try {
+    const raw = localStorage.getItem(EXAM_LEVEL_KEY)
+    return raw === 'pd3' ? 'pd3' : 'pd2'
+  } catch {
+    return 'pd2'
+  }
+}
+
+export function setExamLevel(level: ExamLevel) {
+  try {
+    localStorage.setItem(EXAM_LEVEL_KEY, level)
+  } catch {
+    // ignore
+  }
 }
