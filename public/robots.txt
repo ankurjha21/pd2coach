@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ankurjha21.github.io/pd2coach/sitemap.xml
