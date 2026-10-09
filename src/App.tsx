@@ -14,6 +14,8 @@ import { VocabTrainer } from './pages/vocab/VocabTrainer'
 import { Tips } from './pages/Tips'
 import { Progress } from './pages/Progress'
 import { Settings } from './pages/Settings'
+import { ReviewMistakes } from './pages/ReviewMistakes'
+import { CheatSheet } from './pages/CheatSheet'
 import { PD3ReadingList } from './pages/pd3/reading/PD3ReadingList'
 import { PD3ReadingRunner } from './pages/pd3/reading/PD3ReadingRunner'
 import { PD3WritingHome } from './pages/pd3/writing/PD3WritingHome'
@@ -56,6 +58,8 @@ function AppRoutes() {
 
         <Route path="progress" element={<Progress />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="review" element={<ReviewMistakes />} />
+        <Route path="cheatsheet" element={<CheatSheet />} />
 
         <Route path="pd3/reading" element={<PD3ReadingList />} />
         <Route path="pd3/reading/:examId/:paperId/:sectionId" element={<PD3ReadingRunner key={k} />} />

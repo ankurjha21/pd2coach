@@ -6,6 +6,8 @@
 // student writing samples and official examiner guidance used elsewhere in
 // this app.
 
+import { OFFICIAL_EXAM_DATES_2026 } from './examDates'
+
 export interface TipSection {
   id: string
   icon: string
@@ -16,6 +18,8 @@ export interface TipSection {
 export const examFacts = {
   title: 'Eksamens-fakta (det du skal vide)',
   items: [
+    { label: 'Skriftlig prøve 2026', value: `${OFFICIAL_EXAM_DATES_2026.pd2.writtenLabel}` },
+    { label: 'Mundtlig prøveperiode 2026', value: OFFICIAL_EXAM_DATES_2026.oralPeriod },
     { label: 'Læseforståelse, Delprøve 1 (Opgave 1-2)', value: '30 minutter · ingen hjælpemidler' },
     { label: 'Læseforståelse, Delprøve 2 (Opgave 3-5)', value: '60 minutter · ingen hjælpemidler' },
     { label: 'Skriftlig fremstilling (Delprøve 1 + 2)', value: '1½ time i alt · alle ordbøger tilladt' },

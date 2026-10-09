@@ -3,6 +3,9 @@ import { useMemo } from 'react'
 import { getAttempts, getExamLevel, getSrsState } from '../lib/storage'
 import { isDue } from '../lib/srs'
 import { computeStats, offlineTips } from '../lib/coach'
+import { StudyPlanCard } from '../components/StudyPlanCard'
+import { ExamReadinessSummary, type ReadinessItem } from '../components/ExamReadinessSummary'
+import { scoreBasedVerdict, countBasedVerdict, vocabVerdict, formatPct } from '../lib/readiness'
 import { readingExams } from '../data/reading'
 import { writingPrompts } from '../data/writing'
 import { allSpeakingTopics } from '../data/speaking'
@@ -118,7 +121,8 @@ const PD3_MODULES = [
 export function Dashboard() {
   const examLevel = getExamLevel()
   const attempts = getAttempts()
-  const srsDue = useMemo(() => Object.values(getSrsState()).filter(isDue).length, [])
+  const srsState = useMemo(() => getSrsState(), [])
+  const srsDue = useMemo(() => Object.values(srsState).filter(isDue).length, [srsState])
   const stats = computeStats(attempts, srsDue)
   const tips = offlineTips(stats)
 
@@ -144,6 +148,56 @@ export function Dashboard() {
       : null
     const writingAttempts = pd3Attempts.filter((a) => a.module === 'pd3-writing').length
     const speakingAttempts = pd3Attempts.filter((a) => a.module === 'pd3-speaking').length
+    const grammarAttempts = pd3Attempts.filter((a) => a.module === 'pd3-grammar' && a.scorePercent != null)
+    const grammarAvg = grammarAttempts.length
+      ? grammarAttempts.reduce((sum, a) => sum + (a.scorePercent ?? 0), 0) / grammarAttempts.length
+      : null
+
+    const totalReadingSections = pd3ReadingExams.reduce(
+      (sum, e) => sum + e.papers.reduce((s2, p) => s2 + p.sections.length, 0),
+      0,
+    )
+    const readingCoverage = new Set(pd3Reading.map((a) => a.refId)).size / Math.max(totalReadingSections, 1)
+    const grammarCoverage = new Set(grammarAttempts.map((a) => a.refId)).size / Math.max(pd3GrammarTopics.length, 1)
+    const vocabReviewed = Object.keys(srsState).filter((k) => k.startsWith('pd3phrase:')).length
+
+    const readinessItems: ReadinessItem[] = [
+      {
+        icon: '📖',
+        label: 'Reading',
+        to: '/pd3/reading',
+        verdict: scoreBasedVerdict(pd3Reading.length, readingCoverage, readingAvg),
+        detail: `${new Set(pd3Reading.map((a) => a.refId)).size}/${totalReadingSections} opgaver · snit ${formatPct(readingAvg)}`,
+      },
+      {
+        icon: '✍️',
+        label: 'Writing',
+        to: '/pd3/writing',
+        verdict: countBasedVerdict(writingAttempts),
+        detail: `${writingAttempts} forsøg gemt`,
+      },
+      {
+        icon: '🗣️',
+        label: 'Speaking',
+        to: '/pd3/speaking',
+        verdict: countBasedVerdict(speakingAttempts),
+        detail: `${speakingAttempts} forsøg gemt`,
+      },
+      {
+        icon: '🧩',
+        label: 'Grammar',
+        to: '/pd3/grammar',
+        verdict: scoreBasedVerdict(grammarAttempts.length, grammarCoverage, grammarAvg),
+        detail: `${new Set(grammarAttempts.map((a) => a.refId)).size}/${pd3GrammarTopics.length} emner · snit ${formatPct(grammarAvg)}`,
+      },
+      {
+        icon: '🗂️',
+        label: 'Vocab',
+        to: '/pd3/vocab',
+        verdict: vocabVerdict(vocabReviewed, pd3Phrases.length, srsDue),
+        detail: `${vocabReviewed}/${pd3Phrases.length} set mindst én gang`,
+      },
+    ]
 
     return (
       <div className="space-y-8">
@@ -178,6 +232,10 @@ export function Dashboard() {
           <StatCard icon="🗣️" label="Speaking forsøg" value={speakingAttempts} />
         </div>
 
+        <StudyPlanCard stats={{ readingAvg, writingAttempts, speakingAttempts, vocabDueCount: srsDue }} examLevel="pd3" />
+
+        <ExamReadinessSummary items={readinessItems} />
+
         <div>
           <h2 className="text-lg font-bold text-gray-900 mb-3">Moduler</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -208,6 +266,51 @@ export function Dashboard() {
       </div>
     )
   }
+
+  const readingAttempts = attempts.filter((a) => a.module === 'reading' && a.scorePercent != null)
+  const grammarAttemptsPd2 = attempts.filter((a) => a.module === 'grammar' && a.scorePercent != null)
+  const totalReadingTasksPd2 = readingExams.reduce((sum, e) => sum + e.tasks.length, 0)
+  const readingCoveragePd2 = new Set(readingAttempts.map((a) => a.refId)).size / Math.max(totalReadingTasksPd2, 1)
+  const grammarCoveragePd2 = new Set(grammarAttemptsPd2.map((a) => a.refId)).size / Math.max(grammarTopics.length, 1)
+  const vocabReviewedPd2 = Object.keys(srsState).filter((k) => k.startsWith('verb:') || k.startsWith('adj:')).length
+
+  const readinessItemsPd2: ReadinessItem[] = [
+    {
+      icon: '📖',
+      label: 'Reading',
+      to: '/reading',
+      verdict: scoreBasedVerdict(readingAttempts.length, readingCoveragePd2, stats.readingAvg),
+      detail: `${new Set(readingAttempts.map((a) => a.refId)).size}/${totalReadingTasksPd2} opgaver · snit ${formatPct(stats.readingAvg)}`,
+    },
+    {
+      icon: '✍️',
+      label: 'Writing',
+      to: '/writing',
+      verdict: countBasedVerdict(stats.writingAttempts),
+      detail: `${stats.writingAttempts} forsøg gemt`,
+    },
+    {
+      icon: '🗣️',
+      label: 'Speaking',
+      to: '/speaking',
+      verdict: countBasedVerdict(stats.speakingAttempts),
+      detail: `${stats.speakingAttempts} forsøg gemt`,
+    },
+    {
+      icon: '🧩',
+      label: 'Grammar',
+      to: '/grammar',
+      verdict: scoreBasedVerdict(grammarAttemptsPd2.length, grammarCoveragePd2, stats.grammarAvg),
+      detail: `${new Set(grammarAttemptsPd2.map((a) => a.refId)).size}/${grammarTopics.length} emner · snit ${formatPct(stats.grammarAvg)}`,
+    },
+    {
+      icon: '🗂️',
+      label: 'Vocab',
+      to: '/vocab',
+      verdict: vocabVerdict(vocabReviewedPd2, verbs.length + adjectives.length, stats.vocabDueCount),
+      detail: `${vocabReviewedPd2}/${verbs.length + adjectives.length} set mindst én gang`,
+    },
+  ]
 
   return (
     <div className="space-y-8">
@@ -247,6 +350,10 @@ export function Dashboard() {
         <StatCard icon="✍️" label="Writing forsøg" value={stats.writingAttempts} />
         <StatCard icon="🗂️" label="Ord til repetition" value={stats.vocabDueCount} />
       </div>
+
+      <StudyPlanCard stats={{ readingAvg: stats.readingAvg, writingAttempts: stats.writingAttempts, speakingAttempts: stats.speakingAttempts, vocabDueCount: stats.vocabDueCount }} examLevel="pd2" />
+
+      <ExamReadinessSummary items={readinessItemsPd2} />
 
       {/* Module cards */}
       <div>

@@ -53,8 +53,8 @@ def parse_delprove1_questions(opgave_text):
             }
         elif started and current is not None:
             # continuation of a multi-line question, but stop once we hit
-            # an unrelated trailing footer-ish fragment
-            if re.match(r'^(MAJ-JUNI|NOVEMBER-DECEMBER)', s):
+            # an unrelated trailing footer-ish fragment (e.g. '33 MAJ-JUNI 2024')
+            if re.match(r'^\d{0,3}\s*(MAJ-JUNI|NOVEMBER-DECEMBER)\s+\d{4}\s*\d{0,3}$', s):
                 continue
             current['prompt'] += ' ' + s
     if current:

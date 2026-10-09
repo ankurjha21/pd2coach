@@ -186,6 +186,34 @@ export interface AttemptRecord {
   details?: Record<string, unknown>
 }
 
+// ---------------- Mistake review (spaced re-drilling of wrong answers) ----------------
+// Tracks individual missed questions (not just aggregate attempt scores) so
+// the "Review mistakes" page can resurface exactly what a learner got
+// wrong, across Reading (all question types) and Grammar quizzes, for
+// targeted re-drilling instead of re-doing an entire exercise.
+
+export type MistakeQuestionType = 'short-answer' | 'choice'
+
+export interface MistakeChoiceOption {
+  label: string
+  text?: string
+}
+
+export interface MistakeRecord {
+  id: string // stable key: `${module}:${refId}:${questionKey}`
+  module: ModuleKey
+  context: string // human-readable breadcrumb, e.g. "PD2 Reading · Maj-juni 2023 · Opg. 1"
+  prompt: string
+  questionType: MistakeQuestionType
+  options?: MistakeChoiceOption[] // only for 'choice' questions (mcq/cloze/gap-match/grammar)
+  correctAnswer: string // short-answer: raw answer-key text; choice: the correct option's label
+  userAnswer: string
+  firstMissedAt: number
+  lastMissedAt: number
+  timesMissed: number
+  linkTo: string // route back to the original exercise
+}
+
 export interface VocabSrsState {
   key: string // infinitive or nForm
   box: number // 0-5 leitner box

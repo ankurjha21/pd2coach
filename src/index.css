@@ -81,3 +81,15 @@ body {
 .animate-fade-in {
   animation: fade-in 0.25s ease-out;
 }
+
+/* Printable cheat sheet: hide the app chrome (sidebar, bottom tab bar, AI
+   Coach widget) and let the sheet content use the full page. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-sheet {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

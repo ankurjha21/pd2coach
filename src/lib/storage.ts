@@ -3,16 +3,18 @@
 // (Prøve i Dansk 3, a separate, higher-level exam) attempts/progress share
 // this same mechanism; the exam-level toggle just controls which track the
 // nav/dashboard focuses on.
-import type { AttemptRecord, ExamLevel, VocabSrsState } from '../types'
+import type { AttemptRecord, ExamLevel, MistakeRecord, VocabSrsState } from '../types'
 
 const ATTEMPTS_KEY = 'pd2coach.attempts'
 const SRS_KEY = 'pd2coach.srs'
 const SETTINGS_KEY = 'pd2coach.settings'
 const EXAM_LEVEL_KEY = 'pd2coach.examLevel'
+const MISTAKES_KEY = 'pd2coach.mistakes'
 
 export interface Settings {
   openAiApiKey?: string
   dailyGoalMinutes?: number
+  examDate?: string // ISO yyyy-mm-dd, the user's own exam date (used for the Dashboard countdown/study plan)
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -78,7 +80,44 @@ export function saveSettings(settings: Settings) {
 export function resetAllData() {
   localStorage.removeItem(ATTEMPTS_KEY)
   localStorage.removeItem(SRS_KEY)
+  localStorage.removeItem(MISTAKES_KEY)
   // settings (incl. API key) intentionally preserved on "reset progress"
+}
+
+// ---------------- Mistake review ----------------
+
+export function getMistakes(): Record<string, MistakeRecord> {
+  return readJson<Record<string, MistakeRecord>>(MISTAKES_KEY, {})
+}
+
+// Records (or re-records) a missed question. Called every time a quiz is
+// submitted with a wrong answer; if the same question was already missed
+// before, bumps timesMissed/lastMissedAt instead of duplicating it.
+export function recordMistake(m: Omit<MistakeRecord, 'firstMissedAt' | 'lastMissedAt' | 'timesMissed'>) {
+  const all = getMistakes()
+  const existing = all[m.id]
+  all[m.id] = {
+    ...m,
+    firstMissedAt: existing?.firstMissedAt ?? Date.now(),
+    lastMissedAt: Date.now(),
+    timesMissed: (existing?.timesMissed ?? 0) + 1,
+  }
+  writeJson(MISTAKES_KEY, all)
+}
+
+// Removes a mistake from the queue — called both when a user answers it
+// correctly inside the dedicated Review page, and automatically whenever a
+// quiz is re-submitted and that specific question is now answered right.
+export function resolveMistake(id: string) {
+  const all = getMistakes()
+  if (all[id]) {
+    delete all[id]
+    writeJson(MISTAKES_KEY, all)
+  }
+}
+
+export function clearAllMistakes() {
+  writeJson(MISTAKES_KEY, {})
 }
 
 // ---------------- Exam level (PD2 / PD3) ----------------

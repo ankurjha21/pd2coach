@@ -22,7 +22,9 @@ const PD2_PRIMARY_ITEMS: NavItem[] = [
 const PD2_MORE_ITEMS: NavItem[] = [
   { to: '/grammar', label: 'Grammar', icon: '🧩' },
   { to: '/vocab', label: 'Vocab', icon: '🗂️' },
+  { to: '/review', label: 'Gennemgå fejl', icon: '🔁' },
   { to: '/tips', label: 'Tips & Tricks', icon: '💡' },
+  { to: '/cheatsheet', label: 'Snydeseddel', icon: '🖨️' },
   { to: '/progress', label: 'Progress', icon: '📊' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ]
@@ -37,7 +39,9 @@ const PD3_PRIMARY_ITEMS: NavItem[] = [
 const PD3_MORE_ITEMS: NavItem[] = [
   { to: '/pd3/grammar', label: 'Grammar', icon: '🧩' },
   { to: '/pd3/vocab', label: 'Vocab', icon: '🗂️' },
+  { to: '/review', label: 'Gennemgå fejl', icon: '🔁' },
   { to: '/tips', label: 'Tips & Tricks', icon: '💡' },
+  { to: '/cheatsheet', label: 'Snydeseddel', icon: '🖨️' },
   { to: '/progress', label: 'Progress', icon: '📊' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ]
@@ -97,7 +101,7 @@ export function Layout() {
   return (
     <div className="min-h-full flex flex-col md:flex-row">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:w-60 shrink-0 bg-white border-r border-gray-200 flex-col">
+      <aside className="no-print hidden md:flex md:w-60 shrink-0 bg-white border-r border-gray-200 flex-col">
         <div className="p-5 flex items-center gap-2.5 border-b border-gray-100">
           <span className="text-2xl">🇩🇰</span>
           <div>
@@ -135,7 +139,7 @@ export function Layout() {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="md:hidden sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200">
+      <header className="no-print md:hidden sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="flex items-center justify-between gap-2 px-4 py-3">
           <div className="flex items-center gap-2">
             <span className="text-xl">🇩🇰</span>
@@ -152,7 +156,7 @@ export function Layout() {
       </main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
+      <nav className="no-print md:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-5">
           {primaryItems.map((item) => (
             <NavLink

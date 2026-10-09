@@ -1,9 +1,12 @@
 import { useState } from 'react'
-import { getSettings, saveSettings, resetAllData } from '../lib/storage'
+import { getSettings, saveSettings, resetAllData, getExamLevel } from '../lib/storage'
+import { OFFICIAL_EXAM_DATES_2026 } from '../data/examDates'
 
 export function Settings() {
   const [settings, setSettings] = useState(getSettings())
   const [savedMsg, setSavedMsg] = useState(false)
+  const examLevel = getExamLevel()
+  const officialDate = OFFICIAL_EXAM_DATES_2026[examLevel]
 
   function handleSave() {
     saveSettings(settings)
@@ -22,6 +25,39 @@ export function Settings() {
           <p className="text-gray-600 text-sm mt-0.5">
             Alt gemmes lokalt i din browser — intet sendes til en server (medmindre du bruger din egen AI-nøgle).
           </p>
+        </div>
+      </div>
+
+      <div className="card p-5 space-y-4">
+        <h2 className="font-bold text-gray-900">🗓️ Eksamensdato (til nedtælling og studieplan)</h2>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          Oversigt (Dashboard) viser en nedtælling og en personlig ugeplan baseret på, hvor mange dage du har
+          tilbage. Som standard bruges den officielle {examLevel.toUpperCase()}-skriftlige eksamensdato for 2026 (
+          {officialDate.writtenLabel}). Sæt din egen dato her, hvis den er anderledes (fx hvis du skal til mundtlig
+          prøve i perioden {OFFICIAL_EXAM_DATES_2026.oralPeriod}).
+        </p>
+        <label className="block max-w-xs">
+          <span className="text-sm font-semibold text-gray-700">Min eksamensdato</span>
+          <input
+            type="date"
+            value={settings.examDate ?? ''}
+            onChange={(e) => setSettings((s) => ({ ...s, examDate: e.target.value }))}
+            placeholder={officialDate.written}
+            className="mt-1.5 w-full border-2 border-gray-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-dk-red transition-colors"
+          />
+        </label>
+        <div className="flex gap-2 flex-wrap">
+          <button onClick={handleSave} className="btn-primary text-sm px-4 py-2.5 rounded-xl">
+            {savedMsg ? 'Gemt ✓' : 'Gem'}
+          </button>
+          {settings.examDate && (
+            <button
+              onClick={() => setSettings((s) => ({ ...s, examDate: '' }))}
+              className="text-sm font-semibold text-gray-500 border-2 border-gray-200 rounded-xl px-4 py-2.5 hover:bg-gray-50 transition-colors"
+            >
+              Brug officiel standarddato
+            </button>
+          )}
         </div>
       </div>
 

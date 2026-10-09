@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getGrammarTopic } from '../../data/grammar'
-import { addAttempt } from '../../lib/storage'
+import { addAttempt, recordMistake, resolveMistake } from '../../lib/storage'
 
 export function GrammarQuiz() {
   const { topicId } = useParams()
@@ -30,6 +30,27 @@ export function GrammarQuiz() {
       label: topic!.title,
       scorePercent,
     })
+
+    const linkTo = `/grammar/${topic!.id}`
+    for (const q of topic!.quiz) {
+      const mistakeId = `grammar:${topic!.id}:${q.id}`
+      const chosenIndex = answers[q.id]
+      if (chosenIndex === q.answerIndex) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'grammar',
+          context: topic!.title,
+          prompt: q.prompt,
+          questionType: 'choice',
+          options: q.options.map((o) => ({ label: o })),
+          correctAnswer: q.options[q.answerIndex],
+          userAnswer: chosenIndex != null ? q.options[chosenIndex] : '',
+          linkTo,
+        })
+      }
+    }
   }
 
   const correctCount = topic.quiz.filter((q) => answers[q.id] === q.answerIndex).length

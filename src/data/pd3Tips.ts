@@ -3,6 +3,8 @@
 // drawn from the real exam booklets and censor/eksaminator rubrics
 // extracted in scripts/extract_pd3_*.py; the strategic advice is original.
 
+import { OFFICIAL_EXAM_DATES_2026 } from './examDates'
+
 export interface TipSection {
   id: string
   icon: string
@@ -13,6 +15,8 @@ export interface TipSection {
 export const pd3ExamFacts = {
   title: 'Eksamens-fakta for PD3 (det du skal vide)',
   items: [
+    { label: 'Skriftlig prøve 2026', value: `${OFFICIAL_EXAM_DATES_2026.pd3.writtenLabel}` },
+    { label: 'Mundtlig prøveperiode 2026', value: OFFICIAL_EXAM_DATES_2026.oralPeriod },
     { label: 'Niveau', value: 'Vantage (B2) ifølge Common European Framework of Reference (CEFR)' },
     { label: 'Læseforståelse 1 (Delprøve 1)', value: '25 minutter · ingen hjælpemidler · 15 point' },
     { label: 'Læseforståelse 2 (Delprøve 2A/2B/3)', value: '65 minutter · ingen hjælpemidler · ca. 22-24 point' },

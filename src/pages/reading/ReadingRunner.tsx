@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getReadingExam } from '../../data/reading'
 import { Timer } from '../../components/Timer'
-import { addAttempt } from '../../lib/storage'
+import { addAttempt, recordMistake, resolveMistake } from '../../lib/storage'
 import { isShortAnswerCorrect } from '../../lib/answerMatch'
 import type { ReadingQuestion } from '../../types'
 
@@ -47,6 +47,28 @@ export function ReadingRunner() {
       scorePercent,
       details: { earned, totalPoints },
     })
+
+    const linkTo = `/reading/${exam!.id}/${task!.id}`
+    const context = `${exam!.exam.label} · Opgave ${task!.opgaveNumber}`
+    for (const q of scorable) {
+      const mistakeId = `reading:${exam!.id}/${task!.id}:${q.id}`
+      const userAnswer = answers[q.id] ?? ''
+      if (isAnswerCorrect(userAnswer, q.answer)) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'reading',
+          context,
+          prompt: q.prompt,
+          questionType: q.options && q.options.length > 0 ? 'choice' : 'short-answer',
+          options: q.options?.map((o) => ({ label: o })),
+          correctAnswer: Array.isArray(q.answer) ? q.answer[0] : q.answer,
+          userAnswer,
+          linkTo,
+        })
+      }
+    }
   }
 
   const totalPoints = scorable.reduce((sum, q) => sum + q.points, 0)

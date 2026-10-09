@@ -38,6 +38,10 @@ own OpenAI key" feature, see below).
 
 | Module | What it does |
 |---|---|
+| 🗓️ **Study plan** | A Dashboard countdown + personalized weekly focus, defaulting to the official 2026 PD2/PD3 exam dates (editable in Settings) |
+| 📊 **Exam readiness** | A traffic-light summary per module (Reading/Writing/Speaking/Grammar/Vocab) so you know where to spend your remaining study time |
+| 🔁 **Review mistakes** | Every wrong answer from a Reading or Grammar quiz is saved for targeted re-drilling, instead of re-doing the whole exercise |
+| 🖨️ **Cheat sheet** | A printable/PDF-able one-page summary (exam facts, grading scale, top phrases/connectives, condensed grammar) for last-minute review |
 | 💡 **Tips & Tricks** | Exam facts and strategy tips — content switches automatically between PD2 and PD3 based on the active exam level |
 | 📊 **Progress** | Local history of every attempt/score, across both PD2 and PD3 modules |
 | 🤖 **AI Coach** | A floating chat widget giving study tips based on your own progress stats, plus direct verb/adjective-conjugation lookups — works fully offline; optionally upgrade to real conversational AI with your own API key |

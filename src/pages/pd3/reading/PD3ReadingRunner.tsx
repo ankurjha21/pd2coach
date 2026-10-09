@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getPD3ReadingExam } from '../../../data/pd3'
 import { Timer } from '../../../components/Timer'
-import { addAttempt } from '../../../lib/storage'
+import { addAttempt, recordMistake, resolveMistake } from '../../../lib/storage'
 import { isShortAnswerCorrect } from '../../../lib/answerMatch'
 import type {
   PD3ClozeItem,
@@ -63,10 +63,18 @@ export function PD3ReadingRunner() {
     addAttempt({
       module: 'pd3-reading',
       refId: `${exam!.id}/${paper!.id}/${section!.id}`,
-      label: `${exam!.exam.label} — ${paper!.title} · ${section!.letter}`,
+      label: `${exam!.exam.label} — ${paper!.title} · Delprøve ${section!.letter}`,
       scorePercent,
       details: { earned: e, total: t },
     })
+
+    recordMistakesForSection(
+      section!,
+      answers,
+      `pd3-reading:${exam!.id}/${paper!.id}/${section!.id}`,
+      `${exam!.exam.label} · ${paper!.title} · Delprøve ${section!.letter}`,
+      `/pd3/reading/${exam!.id}/${paper!.id}/${section!.id}`,
+    )
   }
 
   const answeredCount = Object.values(answers).filter((v) => v && v.trim().length > 0).length
@@ -183,6 +191,98 @@ function scoreSection(section: PD3ReadingSection, answers: Record<string, string
     }
   }
   return { earned: Math.round(earned), total: Math.round(total) }
+}
+
+// Records (or resolves) a mistake entry for every scorable question in this
+// section, so the "Review mistakes" page can resurface exactly which
+// questions were missed across all four PD3 reading question types.
+function recordMistakesForSection(
+  section: PD3ReadingSection,
+  answers: Record<string, string>,
+  idPrefix: string,
+  context: string,
+  linkTo: string,
+) {
+  if (section.type === 'short-answer') {
+    for (const q of section.shortAnswerQuestions ?? []) {
+      const userAnswer = answers[`q${q.number}`] ?? ''
+      const mistakeId = `${idPrefix}:q${q.number}`
+      if (isShortAnswerCorrect(userAnswer, q.answer)) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'pd3-reading',
+          context,
+          prompt: q.prompt,
+          questionType: 'short-answer',
+          correctAnswer: q.answer,
+          userAnswer,
+          linkTo,
+        })
+      }
+    }
+  } else if (section.type === 'mcq') {
+    for (const q of section.mcqQuestions ?? []) {
+      const userAnswer = answers[`q${q.number}`] ?? ''
+      const mistakeId = `${idPrefix}:q${q.number}`
+      if (userAnswer === q.correct) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'pd3-reading',
+          context,
+          prompt: q.prompt,
+          questionType: 'choice',
+          options: q.options.map((o) => ({ label: o.label, text: o.text })),
+          correctAnswer: q.correct,
+          userAnswer,
+          linkTo,
+        })
+      }
+    }
+  } else if (section.type === 'gap-match') {
+    for (const m of section.gapMatches ?? []) {
+      const userAnswer = answers[`g${m.number}`] ?? ''
+      const mistakeId = `${idPrefix}:g${m.number}`
+      if (userAnswer === m.correct) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'pd3-reading',
+          context,
+          prompt: `Hul (${m.number}) — match med den rigtige tekstdel`,
+          questionType: 'choice',
+          options: section.gapOptions?.map((o) => ({ label: o.label, text: o.text })),
+          correctAnswer: m.correct,
+          userAnswer,
+          linkTo,
+        })
+      }
+    }
+  } else if (section.type === 'cloze') {
+    for (const c of section.clozeItems ?? []) {
+      const userAnswer = answers[`c${c.number}`] ?? ''
+      const mistakeId = `${idPrefix}:c${c.number}`
+      if (userAnswer === c.correct) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'pd3-reading',
+          context,
+          prompt: `Hul (${c.number}) — vælg det rigtige ord/udtryk`,
+          questionType: 'choice',
+          options: c.options.map((o) => ({ label: o.label, text: o.text })),
+          correctAnswer: c.correct,
+          userAnswer,
+          linkTo,
+        })
+      }
+    }
+  }
 }
 
 function countQuestions(section: PD3ReadingSection): number {

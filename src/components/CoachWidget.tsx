@@ -53,13 +53,13 @@ export function CoachWidget() {
     <>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-20 right-4 md:bottom-5 md:right-5 z-40 w-14 h-14 rounded-full bg-dk-red text-white shadow-soft-lg flex items-center justify-center text-2xl hover:bg-dk-red-dark active:scale-95 transition-all"
+        className="no-print fixed bottom-20 right-4 md:bottom-5 md:right-5 z-40 w-14 h-14 rounded-full bg-dk-red text-white shadow-soft-lg flex items-center justify-center text-2xl hover:bg-dk-red-dark active:scale-95 transition-all"
         aria-label="Åbn AI Coach"
       >
         {open ? '✕' : '🤖'}
       </button>
       {open && (
-        <div className="fixed bottom-36 right-4 left-4 md:left-auto md:bottom-24 md:right-5 z-40 md:w-[90vw] md:max-w-sm h-[55vh] md:h-[60vh] bg-white rounded-2xl shadow-soft-lg border border-gray-200 flex flex-col overflow-hidden animate-fade-in">
+        <div className="no-print fixed bottom-36 right-4 left-4 md:left-auto md:bottom-24 md:right-5 z-40 md:w-[90vw] md:max-w-sm h-[55vh] md:h-[60vh] bg-white rounded-2xl shadow-soft-lg border border-gray-200 flex flex-col overflow-hidden animate-fade-in">
           <div className="bg-dk-red text-white px-4 py-3 font-semibold flex items-center gap-2">
             <span>🤖</span> AI Coach
           </div>

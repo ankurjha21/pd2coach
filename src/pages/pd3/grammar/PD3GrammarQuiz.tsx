@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getPD3GrammarTopic } from '../../../data/pd3Grammar'
-import { addAttempt } from '../../../lib/storage'
+import { addAttempt, recordMistake, resolveMistake } from '../../../lib/storage'
 
 export function PD3GrammarQuiz() {
   const { topicId } = useParams()
@@ -30,6 +30,27 @@ export function PD3GrammarQuiz() {
       label: topic!.title,
       scorePercent,
     })
+
+    const linkTo = `/pd3/grammar/${topic!.id}`
+    for (const q of topic!.quiz) {
+      const mistakeId = `pd3-grammar:${topic!.id}:${q.id}`
+      const chosenIndex = answers[q.id]
+      if (chosenIndex === q.answerIndex) {
+        resolveMistake(mistakeId)
+      } else {
+        recordMistake({
+          id: mistakeId,
+          module: 'pd3-grammar',
+          context: topic!.title,
+          prompt: q.prompt,
+          questionType: 'choice',
+          options: q.options.map((o) => ({ label: o })),
+          correctAnswer: q.options[q.answerIndex],
+          userAnswer: chosenIndex != null ? q.options[chosenIndex] : '',
+          linkTo,
+        })
+      }
+    }
   }
 
   const correctCount = topic.quiz.filter((q) => answers[q.id] === q.answerIndex).length

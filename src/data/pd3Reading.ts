@@ -126,7 +126,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Der er flere jobmuligheder efter kursusforløbet ’Turisme og oplevelsesøkonomi’. Hvilke steder udover forlystelsesparker nævnes som steder, hvor man kan søge ansættelse? Nævn mindst to. 3 MAJ-JUNI 2017",
+                "prompt": "Der er flere jobmuligheder efter kursusforløbet ’Turisme og oplevelsesøkonomi’. Hvilke steder udover forlystelsesparker nævnes som steder, hvor man kan søge ansættelse? Nævn mindst to.",
                 "groupHeading": "Søg informationer under ’Kurser der forbereder til job i en forlystelsespark’.",
                 "answer": "På turistbureauer, på hotel og konferencesteder og på museer og andre seværdigheder",
                 "points": 1
@@ -603,7 +603,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvad var ifølge Grundtvig det vigtigste i undervisningen på folkehøjskolerne udover Danmarks his- torie, sprog og politiske system? 3 NOVEMBER-DECEMBER 2018",
+                "prompt": "Hvad var ifølge Grundtvig det vigtigste i undervisningen på folkehøjskolerne udover Danmarks his- torie, sprog og politiske system?",
                 "groupHeading": "Søg informationer under ’Højskolerne før og nu’",
                 "answer": "(De danske) sange",
                 "points": 1
@@ -1080,7 +1080,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Sofie synes, der er en smuk festivalplads på Smukfest, men hvorfor var dele af festivalpladsen lukket, da hun besøgte festivalen? 3 MAJ-JUNI 2019",
+                "prompt": "Sofie synes, der er en smuk festivalplads på Smukfest, men hvorfor var dele af festivalpladsen lukket, da hun besøgte festivalen?",
                 "groupHeading": "Søg informationer under ’Fire indtryk af musikfestivaler’",
                 "answer": "(Det var den) sidste dag",
                 "points": 1
@@ -1557,7 +1557,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Biffens Venner er en støtteforening for Biffen Nordkraft. Hvad er formålet med at samle penge ind til biografens drift? 33 NOVEMBER-DECEMBER 2019",
+                "prompt": "Biffens Venner er en støtteforening for Biffen Nordkraft. Hvad er formålet med at samle penge ind til biografens drift?",
                 "groupHeading": "Søg informationer under ’Udvalgte biografer i Danmark’",
                 "answer": "At bevare Biffen Nordkraft/den (som en uafhængig biograf)",
                 "points": 1
@@ -2034,7 +2034,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvorfor synes James Milner, det var spændende at se nogle af de arkæologiske fund fra vikingetiden i virkeligheden? 33 MAJ-JUNI 2020",
+                "prompt": "Hvorfor synes James Milner, det var spændende at se nogle af de arkæologiske fund fra vikingetiden i virkeligheden?",
                 "groupHeading": "Søg informationer under ’Fire besøgende fortæller’",
                 "answer": "(Han havde kun) set genstandene/dem i bøger",
                 "points": 1
@@ -2511,7 +2511,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvad gør Mona Sørensen, så hun kan bevare roen derhjemme i hverdagen? 33 NOVEMBER-DECEMBER 2020",
+                "prompt": "Hvad gør Mona Sørensen, så hun kan bevare roen derhjemme i hverdagen?",
                 "groupHeading": "Søg informationer under ’Anmeldelser af kurser’",
                 "answer": "(Hun er blevet bedre til at) lægge(r) telefonen til side",
                 "points": 1
@@ -2988,7 +2988,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Rønne Theater er kendt for den fine gamle scene. Hvor mange personer kan der sidde der, hvis der spilles med udvidet scenegulv? 33 MAJ-JUNI 2021",
+                "prompt": "Rønne Theater er kendt for den fine gamle scene. Hvor mange personer kan der sidde der, hvis der spilles med udvidet scenegulv?",
                 "groupHeading": "Søg informationer under ’Tre danske teatre’",
                 "answer": "(Ca.) 260 (personer)",
                 "points": 1
@@ -3465,7 +3465,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvilket år åbnede den første jernbane på Fyn, der gik via Odense? 33 NOVEMBER-DECEMBER 2021",
+                "prompt": "Hvilket år åbnede den første jernbane på Fyn, der gik via Odense?",
                 "groupHeading": "Søg informationer under Odense bys historie",
                 "answer": "1865",
                 "points": 1
@@ -3942,7 +3942,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Dorte Sørensen er flyttet tilbage til Omø. Hvor gammel var hun, da hun første gang flyttede til øen? 33 MAJ-JUNI 2022",
+                "prompt": "Dorte Sørensen er flyttet tilbage til Omø. Hvor gammel var hun, da hun første gang flyttede til øen?",
                 "groupHeading": "Søg informationer under Tre øboere fortæller.",
                 "answer": "to (år)",
                 "points": 1
@@ -4419,7 +4419,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvor sælger Asbjørn Asgaard sine varer? 33 NOVEMBER-DECEMBER 2022",
+                "prompt": "Hvor sælger Asbjørn Asgaard sine varer?",
                 "groupHeading": "Søg informationer under Tre danskere fortæller om deres forhold til vikinger",
                 "answer": "(På) vikingemarkeder/vikingefestivaler",
                 "points": 1
@@ -4877,7 +4877,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvorfor har Mia McCaul ikke behov for at tage et arbejde ved siden af sit studie? 33 MAJ-JUNI 2023",
+                "prompt": "Hvorfor har Mia McCaul ikke behov for at tage et arbejde ved siden af sit studie?",
                 "groupHeading": "Søg informationer under At flytte til Sønderjylland",
                 "answer": "Huslejen er billig",
                 "points": 1
@@ -5335,7 +5335,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "I hvilke måneder er Bornholm den kommune i Danmark, hvor solen skinner mest? 33 NOVEMBER-DECEMBER 2023",
+                "prompt": "I hvilke måneder er Bornholm den kommune i Danmark, hvor solen skinner mest?",
                 "groupHeading": "Søg informationer under Bornholms natur, landskab og klima",
                 "answer": "(Fra) maj til september",
                 "points": 1
@@ -5793,7 +5793,7 @@ export const pd3ReadingExams: PD3ReadingExam[] = [
               },
               {
                 "number": 15,
-                "prompt": "Hvad synes Stinne Holm især er positivt ved det at være frivillig på Paletten, udover at hun kan høre gratis koncerter? 33 MAJ-JUNI 2024",
+                "prompt": "Hvad synes Stinne Holm især er positivt ved det at være frivillig på Paletten, udover at hun kan høre gratis koncerter?",
                 "groupHeading": "Søg informationer under Tre borgere i Viborg fortæller om byen",
                 "answer": "(Hun har fået) nye venner",
                 "points": 1
