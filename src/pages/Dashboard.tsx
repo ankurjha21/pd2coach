@@ -17,6 +17,7 @@ const MODULES = [
     title: 'Reading',
     desc: 'Læseforståelse — rigtige eksamensopgaver 2013-2023 med facit.',
     stat: (n: number) => `${n} eksamenssæt`,
+    tint: 'bg-blue-50 text-blue-700',
   },
   {
     to: '/writing',
@@ -24,6 +25,7 @@ const MODULES = [
     title: 'Writing',
     desc: 'Skriftlig fremstilling — 9 genrer, rigtige opgaver & elevbesvarelser.',
     stat: (n: number) => `${n} opgaver`,
+    tint: 'bg-purple-50 text-purple-700',
   },
   {
     to: '/speaking',
@@ -31,6 +33,7 @@ const MODULES = [
     title: 'Speaking',
     desc: 'Mundtlig kommunikation — billedbeskrivelse, mening, og diskussion.',
     stat: (n: number) => `${n} emner`,
+    tint: 'bg-emerald-50 text-emerald-700',
   },
   {
     to: '/grammar',
@@ -38,6 +41,7 @@ const MODULES = [
     title: 'Grammar',
     desc: 'Grammar Engine — ordstilling, bøjning, tider, modalverber.',
     stat: (n: number) => `${n} emner`,
+    tint: 'bg-amber-50 text-amber-700',
   },
   {
     to: '/vocab',
@@ -45,6 +49,7 @@ const MODULES = [
     title: 'Vocab',
     desc: 'Bøj 500 verber og 250 adjektiver med spaced repetition.',
     stat: (n: number) => `${n} ord`,
+    tint: 'bg-rose-50 text-rose-700',
   },
   {
     to: '/tips',
@@ -52,6 +57,7 @@ const MODULES = [
     title: 'Tips & Tricks',
     desc: 'Eksamensstrategi, tidsfakta og de hyppigste fejl — per del af eksamen.',
     stat: (n: number) => `${n} emner`,
+    tint: 'bg-indigo-50 text-indigo-700',
   },
 ]
 
@@ -72,57 +78,88 @@ export function Dashboard() {
 
   return (
     <div className="space-y-8">
+      {/* Hero */}
+      <div className="rounded-2xl bg-linear-to-br from-dk-red to-dk-red-dark text-white p-6 md:p-8 shadow-soft-lg relative overflow-hidden">
+        <div className="absolute -right-8 -top-8 text-[140px] opacity-10 select-none leading-none">🇩🇰</div>
+        <div className="relative">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">🇩🇰 PD2 Coach</h1>
+          <p className="text-white/85 mt-2 max-w-xl">
+            Dit personlige øveværktøj til Prøve i Dansk 2 — baseret på rigtige eksamensopgaver fra 2013–2023.
+          </p>
+          <div className="flex flex-wrap gap-2 mt-5">
+            <Link
+              to="/reading"
+              className="bg-white text-dk-red font-bold px-4 py-2.5 rounded-xl text-sm hover:bg-white/90 transition-colors shadow-soft"
+            >
+              Start en læseøvelse →
+            </Link>
+            <Link
+              to="/tips"
+              className="bg-white/15 text-white font-semibold px-4 py-2.5 rounded-xl text-sm hover:bg-white/25 transition-colors border border-white/20"
+            >
+              💡 Se eksamenstips
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+        <StatCard icon="🎯" label="Forsøg i alt" value={stats.totalAttempts} />
+        <StatCard
+          icon="📖"
+          label="Reading snit"
+          value={stats.readingAvg != null ? `${Math.round(stats.readingAvg)}%` : '–'}
+        />
+        <StatCard icon="✍️" label="Writing forsøg" value={stats.writingAttempts} />
+        <StatCard icon="🗂️" label="Ord til repetition" value={stats.vocabDueCount} />
+      </div>
+
+      {/* Module cards */}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">🇩🇰 PD2 Coach</h1>
-        <p className="text-gray-600 mt-1">
-          Dit personlige øveværktøj til Prøve i Dansk 2 — baseret på rigtige eksamensopgaver fra 2013–2023.
-        </p>
-      </div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {MODULES.map((m) => (
-          <Link
-            key={m.to}
-            to={m.to}
-            className="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-dk-red/40 transition-all"
-          >
-            <div className="text-3xl mb-2">{m.icon}</div>
-            <div className="font-semibold text-gray-900">{m.title}</div>
-            <p className="text-sm text-gray-500 mt-1">{m.desc}</p>
-            <div className="text-xs text-dk-red font-medium mt-3">{m.stat(counts[m.to] ?? 0)}</div>
-          </Link>
-        ))}
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h2 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
-          <span>🤖</span> AI Coach — anbefalinger lige nu
-        </h2>
-        <ul className="space-y-2">
-          {tips.map((t, i) => (
-            <li key={i} className="text-sm text-gray-700 flex gap-2">
-              <span className="text-dk-red">•</span>
-              <span>{t}</span>
-            </li>
+        <h2 className="text-lg font-bold text-gray-900 mb-3">Moduler</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {MODULES.map((m) => (
+            <Link
+              key={m.to}
+              to={m.to}
+              className="card card-hover block p-5"
+            >
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-3 ${m.tint}`}>
+                {m.icon}
+              </div>
+              <div className="font-bold text-gray-900">{m.title}</div>
+              <p className="text-sm text-gray-500 mt-1 leading-relaxed">{m.desc}</p>
+              <div className="text-xs text-dk-red font-bold mt-3">{m.stat(counts[m.to] ?? 0)}</div>
+            </Link>
           ))}
-        </ul>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="Forsøg i alt" value={stats.totalAttempts} />
-        <StatCard label="Reading snit" value={stats.readingAvg != null ? `${Math.round(stats.readingAvg)}%` : '–'} />
-        <StatCard label="Writing forsøg" value={stats.writingAttempts} />
-        <StatCard label="Ord til repetition" value={stats.vocabDueCount} />
+      {/* AI Coach */}
+      <div className="card p-5">
+        <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-4">
+          <span className="w-8 h-8 rounded-full bg-dk-red-light flex items-center justify-center">🤖</span>
+          AI Coach — anbefalinger lige nu
+        </h2>
+        <div className="space-y-2.5">
+          {tips.map((t, i) => (
+            <div key={i} className="bg-gray-50 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-gray-700 leading-relaxed">
+              {t}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
 }
 
-function StatCard({ label, value }: { label: string; value: string | number }) {
+function StatCard({ icon, label, value }: { icon: string; label: string; value: string | number }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
-      <div className="text-xs text-gray-500 mt-1">{label}</div>
+    <div className="card p-4 text-center">
+      <div className="text-xl mb-1">{icon}</div>
+      <div className="text-xl md:text-2xl font-extrabold text-gray-900">{value}</div>
+      <div className="text-xs text-gray-500 mt-0.5">{label}</div>
     </div>
   )
 }

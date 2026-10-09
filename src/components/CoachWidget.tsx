@@ -53,13 +53,13 @@ export function CoachWidget() {
     <>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-dk-red text-white shadow-lg flex items-center justify-center text-2xl hover:bg-dk-red-dark transition-colors"
+        className="fixed bottom-20 right-4 md:bottom-5 md:right-5 z-40 w-14 h-14 rounded-full bg-dk-red text-white shadow-soft-lg flex items-center justify-center text-2xl hover:bg-dk-red-dark active:scale-95 transition-all"
         aria-label="Åbn AI Coach"
       >
         {open ? '✕' : '🤖'}
       </button>
       {open && (
-        <div className="fixed bottom-24 right-5 z-40 w-[90vw] max-w-sm h-[60vh] bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-36 right-4 left-4 md:left-auto md:bottom-24 md:right-5 z-40 md:w-[90vw] md:max-w-sm h-[55vh] md:h-[60vh] bg-white rounded-2xl shadow-soft-lg border border-gray-200 flex flex-col overflow-hidden animate-fade-in">
           <div className="bg-dk-red text-white px-4 py-3 font-semibold flex items-center gap-2">
             <span>🤖</span> AI Coach
           </div>
@@ -67,14 +67,18 @@ export function CoachWidget() {
             {messages.map((m, i) => (
               <div
                 key={i}
-                className={`whitespace-pre-wrap rounded-lg px-3 py-2 max-w-[90%] ${
-                  m.role === 'user' ? 'bg-dk-red text-white ml-auto' : 'bg-gray-100 text-gray-800'
+                className={`whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 max-w-[90%] ${
+                  m.role === 'user' ? 'bg-dk-red text-white ml-auto rounded-br-sm' : 'bg-gray-100 text-gray-800 rounded-bl-sm'
                 }`}
               >
                 {m.content}
               </div>
             ))}
-            {loading && <div className="text-gray-400 text-xs">Tænker…</div>}
+            {loading && (
+              <div className="bg-gray-100 text-gray-400 text-xs rounded-2xl rounded-bl-sm px-3.5 py-2.5 w-fit">
+                Tænker…
+              </div>
+            )}
           </div>
           <form
             onSubmit={(e) => {
@@ -87,9 +91,9 @@ export function CoachWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Spørg om dansk, eksamen, grammatik…"
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dk-red"
+              className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-dk-red"
             />
-            <button type="submit" className="bg-dk-red text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-dk-red-dark">
+            <button type="submit" className="btn-primary px-4 py-2 rounded-full text-sm">
               Send
             </button>
           </form>

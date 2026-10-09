@@ -76,7 +76,7 @@ export function WritingPractice() {
         {prompt.minWords && <p className="font-medium">Minimum {prompt.minWords} ord.</p>}
       </div>
 
-      <details className="bg-white rounded-xl border border-gray-200">
+      <details className="card">
         <summary className="cursor-pointer select-none px-4 py-3 font-medium text-gray-800">
           Nyttige vendinger til "{info.label}"
         </summary>
@@ -114,24 +114,24 @@ export function WritingPractice() {
           onChange={(e) => setText(e.target.value)}
           rows={14}
           placeholder="Skriv din besvarelse her…"
-          className="w-full border border-gray-300 rounded-xl p-4 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-dk-red font-sans"
+          className="w-full border-2 border-gray-200 rounded-2xl p-4 text-[15px] leading-relaxed focus:outline-none focus:border-dk-red transition-colors font-sans shadow-soft"
         />
-        <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
-          <span>
+        <div className="flex items-center justify-between mt-3 text-sm text-gray-500 flex-wrap gap-2">
+          <span className="font-semibold">
             {analysis.wordCount} ord · {analysis.sentenceCount} sætninger
           </span>
           <div className="flex gap-2">
             <button
               onClick={handleAiFeedback}
               disabled={aiLoading || text.trim().length < 10}
-              className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg disabled:opacity-50"
+              className="text-xs bg-gray-100 hover:bg-gray-200 px-3.5 py-2 rounded-full font-semibold disabled:opacity-50 transition-colors"
             >
               {aiLoading ? 'Spørger AI Coach…' : '🤖 Få AI-feedback'}
             </button>
             <button
               onClick={handleSave}
               disabled={text.trim().length < 5}
-              className="text-xs bg-dk-red text-white hover:bg-dk-red-dark px-3 py-1.5 rounded-lg disabled:opacity-50"
+              className="text-xs btn-primary px-3.5 py-2 rounded-full disabled:opacity-50"
             >
               {saved ? 'Gemt ✓' : 'Gem forsøg'}
             </button>
@@ -140,13 +140,13 @@ export function WritingPractice() {
       </div>
 
       {aiFeedback && (
-        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-900 whitespace-pre-wrap">
-          <div className="font-semibold mb-1">🤖 AI Coach feedback</div>
+        <div className="card bg-indigo-50 border-indigo-200 p-4 text-sm text-indigo-900 whitespace-pre-wrap">
+          <div className="font-bold mb-1.5 flex items-center gap-1.5">🤖 AI Coach feedback</div>
           {aiFeedback}
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="card p-4">
         <h2 className="font-semibold text-gray-900 mb-3">Automatisk tjek</h2>
         <ul className="space-y-2">
           {analysis.feedback.map((f, i) => (
@@ -177,7 +177,7 @@ export function WritingPractice() {
       </div>
 
       {modelAnswers.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="card p-4">
           <button onClick={() => setShowModel((s) => !s)} className="font-semibold text-gray-900 flex items-center gap-2">
             <span>{showModel ? '▼' : '▶'}</span> Se ægte elevbesvarelse {modelAnswers[0].grade && `(karakter: ${modelAnswers[0].grade})`}
           </button>

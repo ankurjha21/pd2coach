@@ -1,8 +1,23 @@
 @import "tailwindcss";
+@import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/manrope/800.css";
 
 @theme {
   --color-dk-red: #c8102e;
   --color-dk-red-dark: #a10d26;
+  --color-dk-red-light: #fdecee;
+  --color-ink: #1b1f2a;
+  --color-paper: #f7f6f2;
+  --color-success: #15803d;
+  --color-success-light: #ecfdf3;
+  --color-warning: #b45309;
+  --color-warning-light: #fffbeb;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --shadow-soft: 0 1px 2px rgba(17, 20, 28, 0.04), 0 4px 16px rgba(17, 20, 28, 0.06);
+  --shadow-soft-lg: 0 2px 8px rgba(17, 20, 28, 0.06), 0 12px 32px rgba(17, 20, 28, 0.08);
 }
 
 html, body, #root {
@@ -10,9 +25,44 @@ html, body, #root {
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background-color: #f6f5f2;
-  color: #1f2430;
+  font-family: var(--font-sans);
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(200, 16, 46, 0.05), transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(200, 16, 46, 0.04), transparent 35%);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Reusable card/shadow utilities so components stay consistent without
+   repeating long class lists everywhere. */
+.card {
+  background-color: #fff;
+  border: 1px solid rgba(17, 20, 28, 0.07);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+.card-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft-lg);
+  border-color: rgba(200, 16, 46, 0.25);
+}
+
+.btn-primary {
+  background-color: var(--color-dk-red);
+  color: white;
+  font-weight: 600;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+.btn-primary:hover {
+  background-color: var(--color-dk-red-dark);
+}
+.btn-primary:active {
+  transform: scale(0.98);
 }
 
 ::-webkit-scrollbar {
@@ -22,4 +72,12 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #cbd0d8;
   border-radius: 9999px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
 }

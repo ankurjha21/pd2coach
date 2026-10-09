@@ -27,7 +27,7 @@ export function WritingGenrePrompts() {
         <p className="text-gray-600 mt-1">{info.description}</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="card p-5">
         <h2 className="font-semibold text-gray-900 mb-2">Struktur-tips</h2>
         <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
           {info.structureTips.map((tip, i) => (
@@ -41,7 +41,7 @@ export function WritingGenrePrompts() {
           <Link
             key={p.id}
             to={`/writing/${genre}/${p.id}`}
-            className="block bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-dk-red/40 transition-all"
+            className="block card p-4 hover:shadow-md hover:border-dk-red/40 transition-all"
           >
             <div className="text-xs text-gray-400 font-medium">{p.exam.label}</div>
             <p className="text-sm text-gray-800 mt-1">{p.situation}</p>

@@ -32,27 +32,34 @@ export function Progress() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">📊 Progress Tracker</h1>
-          <p className="text-gray-600 mt-1">Din øvehistorik, gemt lokalt i din browser.</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center text-2xl shrink-0">
+            📊
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-gray-900">Progress Tracker</h1>
+            <p className="text-gray-600 text-sm mt-0.5">Din øvehistorik, gemt lokalt i din browser.</p>
+          </div>
         </div>
         {attempts.length > 0 && (
-          <button onClick={handleClear} className="text-xs text-red-600 underline">
-            Slet al fremgang
+          <button onClick={handleClear} className="text-xs text-red-600 font-semibold underline shrink-0">
+            Slet alt
           </button>
         )}
       </div>
 
       {attempts.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
-          Ingen forsøg endnu — gå i gang med et modul for at se din fremgang her.
+        <div className="card p-10 text-center">
+          <div className="text-4xl mb-3">📭</div>
+          <p className="text-gray-600 font-medium">Ingen forsøg endnu.</p>
+          <p className="text-gray-400 text-sm mt-1">Gå i gang med et modul for at se din fremgang her.</p>
         </div>
       ) : (
         (Object.keys(MODULE_LABELS) as ModuleKey[])
           .filter((m) => byModule[m]?.length)
           .map((m) => (
-            <div key={m} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={m} className="card p-4">
               <h2 className="font-semibold text-gray-900 mb-3">{MODULE_LABELS[m]}</h2>
               <div className="space-y-2">
                 {byModule[m].map((a) => (

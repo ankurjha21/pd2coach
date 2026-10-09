@@ -1,12 +1,23 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { CoachWidget } from './CoachWidget'
 import { usePageviewTracking } from '../lib/analytics'
 
-const NAV_ITEMS = [
-  { to: '/', label: 'Oversigt', icon: '🏠', end: true },
+interface NavItem {
+  to: string
+  label: string
+  icon: string
+  end?: boolean
+}
+
+const PRIMARY_ITEMS: NavItem[] = [
+  { to: '/', label: 'Hjem', icon: '🏠', end: true },
   { to: '/reading', label: 'Reading', icon: '📖' },
   { to: '/writing', label: 'Writing', icon: '✍️' },
   { to: '/speaking', label: 'Speaking', icon: '🗣️' },
+]
+
+const MORE_ITEMS: NavItem[] = [
   { to: '/grammar', label: 'Grammar', icon: '🧩' },
   { to: '/vocab', label: 'Vocab', icon: '🗂️' },
   { to: '/tips', label: 'Tips & Tricks', icon: '💡' },
@@ -14,42 +25,132 @@ const NAV_ITEMS = [
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ]
 
+const ALL_ITEMS: NavItem[] = [
+  { to: '/', label: 'Oversigt', icon: '🏠', end: true },
+  ...PRIMARY_ITEMS.slice(1),
+  ...MORE_ITEMS,
+]
+
+function isMoreActive(pathname: string) {
+  return MORE_ITEMS.some((item) => pathname.startsWith(item.to))
+}
+
 export function Layout() {
   usePageviewTracking()
+  const [moreOpen, setMoreOpen] = useState(false)
+  const location = useLocation()
 
   return (
     <div className="min-h-full flex flex-col md:flex-row">
-      <aside className="md:w-56 shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200">
-        <div className="p-4 flex items-center gap-2">
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex md:w-60 shrink-0 bg-white border-r border-gray-200 flex-col">
+        <div className="p-5 flex items-center gap-2.5 border-b border-gray-100">
           <span className="text-2xl">🇩🇰</span>
           <div>
-            <div className="font-bold text-lg leading-tight">PD2 Coach</div>
+            <div className="font-extrabold text-lg leading-tight tracking-tight">PD2 Coach</div>
             <div className="text-xs text-gray-500">Prøve i Dansk 2</div>
           </div>
         </div>
-        <nav className="flex md:flex-col gap-1 px-2 pb-3 overflow-x-auto md:overflow-visible">
-          {NAV_ITEMS.map((item) => (
+        <nav className="flex flex-col gap-1 px-3 py-4 flex-1">
+          {ALL_ITEMS.map((item, i) => (
+            <div key={item.to}>
+              {i === 4 && <div className="h-px bg-gray-100 my-2 mx-1" />}
+              <NavLink
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? 'bg-dk-red text-white shadow-soft'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  }`
+                }
+              >
+                <span className="text-base">{item.icon}</span>
+                {item.label}
+              </NavLink>
+            </div>
+          ))}
+        </nav>
+        <div className="p-4 text-xs text-gray-400 border-t border-gray-100">
+          Gratis & offline-first · dine data forlader aldrig din browser
+        </div>
+      </aside>
+
+      {/* Mobile top bar */}
+      <header className="md:hidden sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div className="flex items-center gap-2 px-4 py-3">
+          <span className="text-xl">🇩🇰</span>
+          <div className="font-extrabold text-base tracking-tight">PD2 Coach</div>
+        </div>
+      </header>
+
+      <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        <div className="max-w-5xl mx-auto p-4 md:p-8 animate-fade-in">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
+        <div className="grid grid-cols-5">
+          {PRIMARY_ITEMS.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
+              onClick={() => setMoreOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  isActive ? 'bg-dk-red text-white' : 'text-gray-700 hover:bg-gray-100'
+                `flex flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] font-semibold transition-colors ${
+                  isActive ? 'text-dk-red' : 'text-gray-500'
                 }`
               }
             >
-              <span>{item.icon}</span>
+              <span className="text-lg leading-none">{item.icon}</span>
               {item.label}
             </NavLink>
           ))}
-        </nav>
-      </aside>
-      <main className="flex-1 min-w-0">
-        <div className="max-w-5xl mx-auto p-4 md:p-8">
-          <Outlet />
+          <button
+            onClick={() => setMoreOpen((o) => !o)}
+            className={`flex flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] font-semibold transition-colors ${
+              moreOpen || isMoreActive(location.pathname) ? 'text-dk-red' : 'text-gray-500'
+            }`}
+          >
+            <span className="text-lg leading-none">{moreOpen ? '✕' : '⋯'}</span>
+            Mere
+          </button>
         </div>
-      </main>
+      </nav>
+
+      {/* Mobile "more" sheet */}
+      {moreOpen && (
+        <div className="md:hidden fixed inset-0 z-20" onClick={() => setMoreOpen(false)}>
+          <div className="absolute inset-0 bg-black/30" />
+          <div
+            className="absolute bottom-16 inset-x-0 bg-white rounded-t-2xl shadow-soft-lg p-3 animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="grid grid-cols-1 gap-1 max-h-[60vh] overflow-y-auto">
+              {MORE_ITEMS.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMoreOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold ${
+                      isActive ? 'bg-dk-red text-white' : 'text-gray-700 hover:bg-gray-100'
+                    }`
+                  }
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <CoachWidget />
     </div>
   )

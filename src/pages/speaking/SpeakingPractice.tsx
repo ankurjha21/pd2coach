@@ -144,7 +144,7 @@ export function SpeakingPractice() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {topic.pictures.map((pic) => (
-          <div key={pic.participant} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={pic.participant} className="card p-4">
             <div className="text-xs font-semibold text-dk-red uppercase tracking-wide mb-2">
               Prøvedeltager {pic.participant}
             </div>
@@ -160,7 +160,7 @@ export function SpeakingPractice() {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="card p-4">
         <h2 className="font-semibold text-gray-900 mb-2">💬 Diskussion (begge prøvedeltagere sammen)</h2>
         <p className="text-sm text-gray-700 mb-3">{topic.discussionPrompt}</p>
         <button onClick={() => setShowHelp((s) => !s)} className="text-xs text-dk-red underline">
@@ -188,7 +188,7 @@ export function SpeakingPractice() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="card p-4">
         <h2 className="font-semibold text-gray-900 mb-2">🎙️ Optag dig selv (valgfrit)</h2>
         <p className="text-xs text-gray-500 mb-3">
           Optagelsen gemmes kun i din browser og bliver aldrig uploadet nogen steder.
@@ -233,7 +233,7 @@ export function SpeakingPractice() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="card p-4">
         <h2 className="font-semibold text-gray-900 mb-3">Selvevaluering</h2>
         <ul className="space-y-2">
           {CHECKLIST_ITEMS.map((item, i) => (
