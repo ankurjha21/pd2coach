@@ -3,29 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { getReadingExam } from '../../data/reading'
 import { Timer } from '../../components/Timer'
 import { addAttempt } from '../../lib/storage'
+import { isShortAnswerCorrect } from '../../lib/answerMatch'
 import type { ReadingQuestion } from '../../types'
 
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // strip accents for lenient compare (but keep æøå via custom map below)
-    .trim()
-}
-
-// Re-apply Danish letters that NFD-stripping would otherwise mangle (æ/ø/å
-// have no precomposed diacritic decomposition in the way e.g. é does, so
-// they survive the above; this helper mainly strips stray accents on loanwords).
 function isAnswerCorrect(userAnswer: string, correct: string | string[]): boolean {
-  const options = Array.isArray(correct) ? correct : [correct]
-  const userNorm = normalize(userAnswer).replace(/[.,!?]/g, '')
-  return options.some((opt) => {
-    const optNorm = normalize(opt).replace(/[.,!?]/g, '')
-    if (userNorm === optNorm) return true
-    // allow matching one of multiple comma/"og"-separated accepted answers loosely
-    if (optNorm.length > 6 && userNorm.length > 3 && optNorm.includes(userNorm)) return true
-    return false
-  })
+  return isShortAnswerCorrect(userAnswer, correct)
 }
 
 export function ReadingRunner() {

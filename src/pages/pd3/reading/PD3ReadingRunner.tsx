@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getPD3ReadingExam } from '../../../data/pd3'
 import { Timer } from '../../../components/Timer'
 import { addAttempt } from '../../../lib/storage'
+import { isShortAnswerCorrect } from '../../../lib/answerMatch'
 import type {
   PD3ClozeItem,
   PD3GapMatchItem,
@@ -10,27 +11,6 @@ import type {
   PD3ReadingSection,
   PD3ShortAnswerQuestion,
 } from '../../../types'
-
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-}
-
-function isShortAnswerCorrect(userAnswer: string, correct: string): boolean {
-  const userNorm = normalize(userAnswer).replace(/[.,!?()]/g, '')
-  const correctNorm = normalize(correct).replace(/[.,!?()]/g, '')
-  if (!userNorm) return false
-  if (userNorm === correctNorm) return true
-  // accepted answers often include slash-separated alternatives and bracketed optional words
-  const alternatives = correct.split('/').map((a) => normalize(a).replace(/[.,!?()]/g, ''))
-  if (alternatives.some((alt) => alt && (userNorm === alt || alt.includes(userNorm) || userNorm.includes(alt)))) {
-    return true
-  }
-  return correctNorm.length > 6 && userNorm.length > 3 && correctNorm.includes(userNorm)
-}
 
 // Splits a passage containing [[n]] gap markers into alternating text/gap segments.
 function splitOnGaps(text: string): Array<{ type: 'text'; value: string } | { type: 'gap'; number: number }> {
